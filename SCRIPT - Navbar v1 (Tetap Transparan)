@@ -1,0 +1,253 @@
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet" />
+
+<style>
+    /* ==== RESET & BASE ==== */
+    .jiaara-navbar {
+    font-family: 'Inter', sans-serif;
+    background-color: transparent; /* Menjadi transparan */
+    padding: 15px 0;
+    box-shadow: none; /* Menghilangkan bayangan */
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    transition: background 0.3s ease; /* Opsional: agar halus saat berubah warna nantinya */
+}
+
+
+    .jiaara-navbar .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 20px;
+    }
+	
+/* Class tambahan saat di-scroll */
+.jiaara-navbar.scrolled {
+    background-color: #ffffff; /* Warna putih saat scroll */
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+    /* Logo Styling */
+    .logo-wrapper {
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        gap: 10px;
+    }
+
+    .brand-name {
+        color: #f50505;
+        font-size: 22px;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+    }
+
+    /* ==== DESKTOP NAV LINKS ==== */
+    .nav-links {
+        display: flex;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        gap: 30px;
+    }
+
+    .nav-item {
+        text-decoration: none;
+        color: #334155;
+        font-size: 15px;
+        font-weight: 500;
+        transition: color 0.3s ease;
+    }
+
+    .nav-item:hover {
+        color: #f50505;
+    }
+
+    .nav-item.active {
+        color: #f50505;
+        font-weight: 600;
+    }
+
+    /* ==== HAMBURGER MENU (MOBILE) ==== */
+    .hamburger {
+        display: none; /* Sembunyikan di desktop */
+        cursor: pointer;
+        flex-direction: column;
+        gap: 5px;
+        padding: 5px;
+        z-index: 1100;
+    }
+
+    .hamburger span {
+        display: block;
+        width: 25px;
+        height: 3px;
+        background-color: #334155;
+        border-radius: 3px;
+        transition: 0.3s;
+    }
+
+    /* ==== SIDEBAR MOBILE ==== */
+    .mobile-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        z-index: 1050;
+    }
+
+    .mobile-menu {
+        position: fixed;
+        top: 0;
+        left: -280px; /* Sembunyi di kiri */
+        width: 280px;
+        height: 100%;
+        background: #ffffff;
+        z-index: 1060;
+        transition: 0.4s ease-in-out;
+        padding: 80px 20px 20px; /* Padding atas untuk memberi ruang dari tombol close */
+        box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .mobile-menu.active {
+        left: 0; /* Geser ke kanan */
+    }
+
+    .mobile-menu .nav-item {
+        font-size: 18px;
+        display: block;
+        padding: 10px 0;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    /* Tombol Close di Sidebar */
+    .close-menu {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        font-size: 30px;
+        cursor: pointer;
+        color: #334155;
+    }
+
+    /* ==== RESPONSIVE STYLE ==== */
+    @media (max-width: 768px) {
+        .nav-links {
+            display: none; /* Sembunyikan menu horizontal */
+        }
+
+        .hamburger {
+            display: flex; /* Tampilkan hamburger di kiri */
+            order: -1; /* Memastikan hamburger ada di posisi paling kiri */
+        }
+
+        .logo-wrapper {
+            margin-right: auto;
+            margin-left: 15px;
+        }
+        
+        .mobile-overlay.show {
+            display: block;
+        }
+    }
+</style>
+
+<!-- Navigasi -->
+<nav class="jiaara-navbar">
+    <div class="container">
+        <!-- Tombol Hamburger (Hanya Mobile) -->
+        <div class="hamburger" id="hamburger-menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+
+        <!-- Logo -->
+        <a href="https://jiaara.blogspot.com" class="logo-wrapper">
+            <span class="brand-name">JIAARA</span>
+        </a>
+
+        <!-- Navigasi Desktop -->
+        <ul class="nav-links">
+            <li><a href="/" class="nav-item active">Beranda</a></li>
+            <li><a href="/apparel" class="nav-item">Apparel</a></li>
+            <li><a href="/asset" class="nav-item">Asset</a></li>
+            <li><a href="/digiprint" class="nav-item">Digiprint</a></li>
+            <li><a href="/invitation" class="nav-item">Invitation</a></li>
+            <li><a href="/website" class="nav-item">Landing Page</a></li>
+        </ul>
+    </div>
+</nav>
+
+<!-- Overlay untuk menutup menu saat klik di luar -->
+<div class="mobile-overlay" id="overlay"></div>
+
+<!-- Sidebar Mobile -->
+<div class="mobile-menu" id="side-menu">
+    <div class="close-menu" id="close-btn">&times;</div>
+    <a href="/" class="nav-item active">Beranda</a>
+    <a href="/apparel" class="nav-item">Apparel</a>
+    <a href="/asset" class="nav-item">Asset</a>
+    <a href="/digiprint" class="nav-item">Digiprint</a>
+    <a href="/invitation" class="nav-item">Invitation</a>
+    <a href="/website" class="nav-item">Landing Page</a>
+</div>
+
+<script>
+    const hamburger = document.getElementById('hamburger-menu');
+    const sideMenu = document.getElementById('side-menu');
+    const overlay = document.getElementById('overlay');
+    const closeBtn = document.getElementById('close-btn');
+    const navItems = document.querySelectorAll('.nav-item');
+
+    // Fungsi Buka Menu
+    hamburger.addEventListener('click', () => {
+        sideMenu.classList.add('active');
+        overlay.classList.add('show');
+        document.body.style.overflow = 'hidden'; // Mencegah scroll saat menu buka
+    });
+
+    // Fungsi Tutup Menu
+    const closeMenu = () => {
+        sideMenu.classList.remove('active');
+        overlay.classList.remove('show');
+        document.body.style.overflow = 'auto';
+    };
+
+    closeBtn.addEventListener('click', closeMenu);
+    overlay.addEventListener('click', closeMenu);
+
+// Fungsi Transparan
+window.addEventListener('scroll', function() {
+    const navbar = document.querySelector('.jiaara-navbar');
+    if (window.scrollY > 50) {
+        navbar.classList.add('scrolled');
+    } else {
+        navbar.classList.remove('scrolled');
+    }
+});
+
+    // Menangani class active klik
+    navItems.forEach(item => {
+        item.addEventListener('click', function() {
+            navItems.forEach(i => i.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Tutup menu jika di mobile setelah klik item
+            if(window.innerWidth <= 768) {
+                closeMenu();
+            }
+        });
+    });
+</script>
