@@ -1,0 +1,163 @@
+<!-- JIAARA BOTTOM NAVIGATION START -->
+<style>
+/* CSS Reset & Container */
+.jiaara-botnav-wrapper {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #ffffff;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    z-index: 9999;
+    padding-bottom: env(safe-area-inset-bottom); /* Support for modern smartphones */
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+.jiaara-botnav-menu {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 10px 0 8px 0;
+    list-style: none;
+}
+
+.jiaara-botnav-item {
+    flex: 1;
+    text-align: center;
+}
+
+/* Link Style */
+.jiaara-botnav-link {
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+/* Icon & Text Sizing */
+.jiaara-botnav-icon {
+    width: 26px;
+    height: 26px;
+    margin-bottom: 4px;
+    fill: #A6A6A6; /* Warna Abu-abu Default */
+}
+
+.jiaara-botnav-text {
+    font-size: 12px;
+    color: #A6A6A6; /* Warna Abu-abu Default */
+    font-weight: 500;
+}
+
+/* State Aktif (Merah) */
+.jiaara-botnav-active .jiaara-botnav-icon {
+    fill: #D31222; /* Warna Merah */
+}
+
+.jiaara-botnav-active .jiaara-botnav-text {
+    color: #333333; /* Text beranda pada gambar terlihat lebih gelap/hitam */
+    font-weight: 600;
+}
+
+/* Khusus Beranda Aktif Default */
+.jiaara-botnav-active-red .jiaara-botnav-icon {
+    fill: #D31222;
+}
+.jiaara-botnav-active-red .jiaara-botnav-text {
+    color: #000000;
+}
+
+/* Responsive adjustment */
+@media screen and (max-width: 360px) {
+    .jiaara-botnav-text {
+        font-size: 10px;
+    }
+}
+</style>
+
+<nav class="jiaara-botnav-wrapper">
+    <div class="jiaara-botnav-menu">
+        <!-- Beranda (Set as Active) -->
+        <div class="jiaara-botnav-item">
+            <a href="#beranda" class="jiaara-botnav-link jiaara-botnav-active jiaara-botnav-active-red">
+                <svg class="jiaara-botnav-icon" viewBox="0 0 24 24">
+                    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                </svg>
+                <span class="jiaara-botnav-text">Beranda</span>
+            </a>
+        </div>
+
+        <!-- Alasan -->
+        <div class="jiaara-botnav-item">
+            <a href="#alasan" class="jiaara-botnav-link">
+                <svg class="jiaara-botnav-icon" viewBox="0 0 24 24">
+                    <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z"/>
+                </svg>
+                <span class="jiaara-botnav-text">Alasan</span>
+            </a>
+        </div>
+
+        <!-- Tips -->
+        <div class="jiaara-botnav-item">
+            <a href="#tips" class="jiaara-botnav-link">
+                <svg class="jiaara-botnav-icon" viewBox="0 0 24 24">
+                    <path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-1.3l-.85-.6C7.8 13.15 7 11.18 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 2.18-.8 4.15-2.15 5.1z"/>
+                </svg>
+                <span class="jiaara-botnav-text">Tips</span>
+            </a>
+        </div>
+
+        <!-- Katalog -->
+        <div class="jiaara-botnav-item">
+            <a href="#katalog" class="jiaara-botnav-link">
+                <svg class="jiaara-botnav-icon" viewBox="0 0 24 24">
+                    <path d="M7 3L4 7v13c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V7l-3-4H7zm11 4H6V5h12v2z"/>
+                </svg>
+                <span class="jiaara-botnav-text">Katalog</span>
+            </a>
+        </div>
+
+        <!-- Reseller -->
+        <div class="jiaara-botnav-item">
+            <a href="#reseller" class="jiaara-botnav-link">
+                <svg class="jiaara-botnav-icon" viewBox="0 0 24 24">
+                    <path d="M12.5 10.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm7.12 3.88c-.37-.37-.89-.37-1.26 0l-3.36 3.36V12c0-1.1-.9-2-2-2h-2c-1.1 0-2 .9-2 2v5.74l-3.36-3.36c-.37-.37-.89-.37-1.26 0-.37.37-.37.89 0 1.26l4.63 4.63c.37.37.89.37 1.26 0l1-.99 1 .99c.37.37.89.37 1.26 0l4.63-4.63c.37-.37.37-.89 0-1.26z"/>
+                </svg>
+                <span class="jiaara-botnav-text">Reseller</span>
+            </a>
+        </div>
+
+        <!-- Kontak -->
+        <div class="jiaara-botnav-item">
+            <a href="#kontak" class="jiaara-botnav-link">
+                <svg class="jiaara-botnav-icon" viewBox="0 0 24 24">
+                    <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+                </svg>
+                <span class="jiaara-botnav-text">Kontak</span>
+            </a>
+        </div>
+    </div>
+</nav>
+
+<script>
+// Script untuk mengganti class active saat diklik
+document.querySelectorAll('.jiaara-botnav-link').forEach(link => {
+    link.addEventListener('click', function() {
+        // Hapus class active dari semua link
+        document.querySelectorAll('.jiaara-botnav-link').forEach(item => {
+            item.classList.remove('jiaara-botnav-active', 'jiaara-botnav-active-red');
+        });
+        
+        // Tambah class active ke link yang diklik
+        this.classList.add('jiaara-botnav-active');
+        
+        // Jika yang diklik adalah Beranda, tambahkan class khusus merah agar sama dengan gambar
+        if(this.getAttribute('href') === '#beranda') {
+            this.classList.add('jiaara-botnav-active-red');
+        }
+    });
+});
+</script>
+<!-- JIAARA BOTTOM NAVIGATION END -->
