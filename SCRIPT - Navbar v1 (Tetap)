@@ -1,5 +1,5 @@
 <!-- Google Fonts untuk kemiripan font -->
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet" />
 
 <style>
   
@@ -89,19 +89,17 @@
     <div class="container">
         <!-- Bagian Logo -->
         <a href="#" class="logo-wrapper">
-            <!-- Ganti URL src di bawah ini dengan file logo Anda -->
-            <img src="https://i.ibb.co/L6Vv07C/jiaara-logo-placeholder.png" alt="jiaara Logo" class="main-logo">
-            <span class="brand-name">jiaara</span>
+            <span class="brand-name">JIAARA.ID</span>
         </a>
 
         <!-- Bagian Navigasi -->
         <ul class="nav-links">
-            <li><a href="#beranda" class="nav-item active">Beranda</a></li>
-            <li><a href="#fitur" class="nav-item">Fitur</a></li>
-            <li><a href="#produk" class="nav-item">Produk</a></li>
-            <li><a href="#panduan" class="nav-item">Panduan</a></li>
-            <li><a href="#blog" class="nav-item">Blog</a></li>
-            <li><a href="#kontak" class="nav-item">Kontak</a></li>
+            <li><a href="/" class="nav-item active">Beranda</a></li>
+            <li><a href="/apparel" class="nav-item">Apparel</a></li>
+            <li><a href="/asset" class="nav-item">Asset</a></li>
+            <li><a href="/digiprint" class="nav-item">Digiprint</a></li>
+            <li><a href="/invitation" class="nav-item">Invitation</a></li>
+            <li><a href="/website" class="nav-item">Landing Page</a></li>
         </ul>
     </div>
 </nav>
