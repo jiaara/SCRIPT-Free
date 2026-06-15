@@ -1,0 +1,138 @@
+<!-- CSS JIAARA IKLAN JEJER -->
+<style>
+  .jiaara-iklan-jejer-wrapper {
+    display: grid;
+    /* Desktop: 8 Kolom */
+    grid-template-columns: repeat(8, 1fr);
+    gap: 8px;
+    max-width: 85%;
+    margin: 20px auto; 
+    font-family: Arial, sans-serif;
+    box-sizing: border-box;
+  }
+
+  .jiaara-iklan-jejer-card {
+    border: 1px solid #d4a373; 
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: #333;
+    background: #fff;
+    transition: transform 0.2s;
+    overflow: hidden; /* Menjaga konten tidak keluar border */
+  }
+
+  .jiaara-iklan-jejer-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+
+  .jiaara-iklan-jejer-img-box {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    background-color: #f0f8ff;
+  }
+
+  .jiaara-iklan-jejer-img-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .jiaara-iklan-jejer-info {
+    border-top: 1px solid #d4a373;
+    padding: 5px 2px;
+    text-align: center;
+    /* Ukuran font diperkecil agar pas dengan 8 kolom */
+    font-size: 9px; 
+    line-height: 1.1;
+    font-weight: bold;
+    min-height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-transform: capitalize;
+    word-break: break-word; /* Memastikan teks panjang tidak merusak layout */
+  }
+
+  /* MEDIA QUERY UNTUK MOBILE (Maksimal 3 Produk, 1 Baris) */
+  @media (max-width: 768px) {
+    .jiaara-iklan-jejer-wrapper {
+      grid-template-columns: repeat(3, 1fr); /* Paksa 3 kolom */
+      max-width: 95%; /* Lebih lebar di mobile agar gambar tidak terlalu kecil */
+      gap: 5px;
+    }
+
+    /* Sembunyikan produk ke-4 sampai ke-8 di tampilan mobile */
+    .jiaara-iklan-jejer-card:nth-child(n+4) {
+      display: none;
+    }
+    
+    .jiaara-iklan-jejer-info {
+      font-size: 8px; /* Lebih kecil di mobile */
+      min-height: 30px;
+    }
+  }
+</style>
+
+<!-- CONTAINER UNTUK PRODUK -->
+<div id="jiaara-iklan-jejer-container" class="jiaara-iklan-jejer-wrapper">
+  <!-- Diisi oleh JS -->
+</div>
+
+<!-- JAVASCRIPT JIAARA IKLAN JEJER -->
+<script>
+  (function() {
+    // DATA POOL (Siapkan hingga 50 data di sini)
+    const jiaara_iklan_jejer_dataPool = [
+      { nama: "Kipas Portable", link: "#", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgfU5qZ5N_l-Zl7m3-GZtV0vR3t_H3vM_D/s1600/placeholder.png" },
+      { nama: "Powerbank 10k", link: "#", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgfU5qZ5N_l-Zl7m3-GZtV0vR3t_H3vM_D/s1600/placeholder.png" },
+      { nama: "Headset Bass", link: "#", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgfU5qZ5N_l-Zl7m3-GZtV0vR3t_H3vM_D/s1600/placeholder.png" },
+      { nama: "Mouse Wireless", link: "#", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgfU5qZ5N_l-Zl7m3-GZtV0vR3t_H3vM_D/s1600/placeholder.png" },
+      { nama: "Keyboard RGB", link: "#", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgfU5qZ5N_l-Zl7m3-GZtV0vR3t_H3vM_D/s1600/placeholder.png" },
+      { nama: "Smartwatch Z", link: "#", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgfU5qZ5N_l-Zl7m3-GZtV0vR3t_H3vM_D/s1600/placeholder.png" },
+      { nama: "Lampu Meja", link: "#", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgfU5qZ5N_l-Zl7m3-GZtV0vR3t_H3vM_D/s1600/placeholder.png" },
+      { nama: "Tripod Mini", link: "#", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgfU5qZ5N_l-Zl7m3-GZtV0vR3t_H3vM_D/s1600/placeholder.png" },
+      { nama: "Speaker Aktif", link: "#", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgfU5qZ5N_l-Zl7m3-GZtV0vR3t_H3vM_D/s1600/placeholder.png" },
+      { nama: "Charger Fast", link: "#", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgfU5qZ5N_l-Zl7m3-GZtV0vR3t_H3vM_D/s1600/placeholder.png" }
+      // ... tambahkan item lainnya
+    ];
+
+    function jiaara_iklan_jejer_shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function jiaara_iklan_jejer_init() {
+      const container = document.getElementById('jiaara-iklan-jejer-container');
+      if (!container) return;
+
+      // Acak data dan ambil 8 untuk Desktop
+      const shuffled = jiaara_iklan_jejer_shuffle([...jiaara_iklan_jejer_dataPool]);
+      const selected = shuffled.slice(0, 8);
+
+      let html = '';
+      selected.forEach(p => {
+        html += `
+          <a href="${p.link}" class="jiaara-iklan-jejer-card">
+            <div class="jiaara-iklan-jejer-img-box">
+              <img src="${p.img}" alt="${p.nama}" loading="lazy">
+            </div>
+            <div class="jiaara-iklan-jejer-info">${p.nama}</div>
+          </a>`;
+      });
+      container.innerHTML = html;
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', jiaara_iklan_jejer_init);
+    } else {
+      jiaara_iklan_jejer_init();
+    }
+  })();
+</script>
