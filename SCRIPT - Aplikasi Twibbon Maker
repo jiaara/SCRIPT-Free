@@ -1,0 +1,298 @@
+<!-- CSS STYLE -->
+<style>
+    /* Desain Box Utama */
+    .jiapp-container {
+        background-color: #000000;
+        padding: 25px;
+        border-radius: 12px;
+        max-width: 500px;
+        margin: 0 auto;
+        font-family: Arial, sans-serif;
+        box-sizing: border-box;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+
+    /* Judul dan Sub-judul */
+    .jiapp-title {
+        color: #ff0000;
+        text-align: center;
+        margin: 0 0 5px 0;
+        font-size: 28px;
+        font-weight: bold;
+    }
+    .jiapp-subtitle {
+        color: #ff0000;
+        text-align: center;
+        margin: 0 0 25px 0;
+        font-size: 14px;
+        font-weight: normal;
+    }
+
+    /* Input Grup */
+    .jiapp-input-group {
+        margin-bottom: 18px;
+    }
+    .jiapp-input-group label {
+        display: block;
+        color: #ffffff;
+        margin-bottom: 8px;
+        font-size: 14px;
+        font-weight: bold;
+    }
+    .jiapp-input-group input[type="file"], 
+    .jiapp-input-group select {
+        width: 100%;
+        padding: 10px;
+        box-sizing: border-box;
+        background: #222222;
+        color: #ffffff;
+        border: 1px solid #ff0000;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+    .jiapp-note {
+        color: #aaaaaa;
+        font-size: 12px;
+        margin-top: 5px;
+        margin-bottom: 5px;
+        display: block;
+    }
+
+    /* Area Canvas (Preview) */
+    .jiapp-canvas-wrapper {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        background: #1a1a1a;
+        margin-bottom: 20px;
+        border: 2px dashed #444444;
+        border-radius: 8px;
+        position: relative;
+        overflow: hidden;
+    }
+    #jiapp-canvas {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+
+    /* Tombol */
+    .jiapp-button-group {
+        display: flex;
+        gap: 15px;
+    }
+    .jiapp-btn {
+        flex: 1;
+        padding: 14px;
+        border: none;
+        border-radius: 6px;
+        font-weight: bold;
+        font-size: 15px;
+        cursor: pointer;
+        text-transform: uppercase;
+        transition: 0.3s ease;
+        color: #ffffff;
+    }
+    .jiapp-btn-save {
+        background-color: #ff0000;
+    }
+    .jiapp-btn-save:hover {
+        background-color: #cc0000;
+    }
+    .jiapp-btn-reset {
+        background-color: #808080;
+    }
+    .jiapp-btn-reset:hover {
+        background-color: #666666;
+    }
+    
+    /* Responsive untuk HP */
+    @media (max-width: 400px) {
+        .jiapp-button-group {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<!-- HTML STRUKTUR -->
+<div id="jiapp-app" class="jiapp-container">
+    <h2 class="jiapp-title">Twibbon Maker</h2>
+    <p class="jiapp-subtitle">Aplikasi oleh JIAARA</p>
+
+    <!-- Input 1: Foto User -->
+    <div class="jiapp-input-group">
+        <label>1. Masukkan Foto Anda (Rasio 1:1)</label>
+        <input type="file" id="jiapp-photo-upload" accept="image/*">
+    </div>
+
+    <!-- Input 2: Template / Frame -->
+    <div class="jiapp-input-group">
+        <label>2. Pilih Template Twibbon</label>
+        
+        <!-- Pilihan Template Tersedia -->
+        <select id="jiapp-template-select">
+            <option value="">-- Pilih Template Tersedia --</option>
+            <!-- Ganti URL di bagian 'value' dengan URL gambar template PNG Anda yang sudah diupload ke Blogger -->
+            <option value="https://i.ibb.co.com/99HFrd1S/JIAARA-ID-HUT-80-KABUPATEN-SUKOHARJO.png">HUT-80 Kabupaten Sukoharjo</option>
+        </select>
+        
+        <span class="jiapp-note">ATAU Upload Twibbon Sendiri (WAJIB .PNG resolusi 1:1)</span>
+        
+        <!-- Upload Custom Frame -->
+        <input type="file" id="jiapp-frame-upload" accept="image/png">
+    </div>
+
+    <!-- Area Preview Hasil -->
+    <div class="jiapp-canvas-wrapper">
+        <!-- Canvas HD ukuran 1080x1080 agar saat didownload gambarnya tidak pecah -->
+        <canvas id="jiapp-canvas" width="1080" height="1080"></canvas>
+    </div>
+
+    <!-- Tombol Aksi -->
+    <div class="jiapp-button-group">
+        <button id="jiapp-btn-download" class="jiapp-btn jiapp-btn-save">Simpan / Download</button>
+        <button id="jiapp-btn-clear" class="jiapp-btn jiapp-btn-reset">Hapus / Reset</button>
+    </div>
+</div>
+
+<!-- JAVASCRIPT -->
+<script>
+    const jiapp_canvas = document.getElementById('jiapp-canvas');
+    const jiapp_ctx = jiapp_canvas.getContext('2d');
+    
+    let jiapp_userImg = null;
+    let jiapp_frameImg = null;
+
+    // Fungsi Render: Menggambar ulang foto dan frame ke dalam canvas
+    function jiapp_renderCanvas() {
+        // Bersihkan canvas
+        jiapp_ctx.clearRect(0, 0, jiapp_canvas.width, jiapp_canvas.height);
+
+        // 1. Gambar Foto User (Dipotong otomatis ke tengah jika bukan 1:1)
+        if (jiapp_userImg) {
+            const jiapp_size = jiapp_canvas.width;
+            const jiapp_ratio = jiapp_userImg.width / jiapp_userImg.height;
+            let jiapp_drawW, jiapp_drawH, jiapp_offX, jiapp_offY;
+
+            if (jiapp_ratio > 1) { // Landscape
+                jiapp_drawH = jiapp_size;
+                jiapp_drawW = jiapp_drawH * jiapp_ratio;
+                jiapp_offX = (jiapp_size - jiapp_drawW) / 2;
+                jiapp_offY = 0;
+            } else { // Portrait / Kotak
+                jiapp_drawW = jiapp_size;
+                jiapp_drawH = jiapp_drawW / jiapp_ratio;
+                jiapp_offX = 0;
+                jiapp_offY = (jiapp_size - jiapp_drawH) / 2;
+            }
+            jiapp_ctx.drawImage(jiapp_userImg, jiapp_offX, jiapp_offY, jiapp_drawW, jiapp_drawH);
+        }
+
+        // 2. Gambar Frame Twibbon di atas foto
+        if (jiapp_frameImg) {
+            jiapp_ctx.drawImage(jiapp_frameImg, 0, 0, jiapp_canvas.width, jiapp_canvas.height);
+        }
+    }
+
+    // Event: User Upload Foto
+    document.getElementById('jiapp-photo-upload').addEventListener('change', function(e) {
+        const jiapp_file = e.target.files[0];
+        if (!jiapp_file) return;
+        
+        const jiapp_reader = new FileReader();
+        jiapp_reader.onload = function(event) {
+            const jiapp_img = new Image();
+            jiapp_img.onload = function() {
+                jiapp_userImg = jiapp_img;
+                jiapp_renderCanvas();
+            }
+            jiapp_img.src = event.target.result;
+        }
+        jiapp_reader.readAsDataURL(jiapp_file);
+    });
+
+    // Event: User Upload Frame Sendiri (Wajib PNG)
+    document.getElementById('jiapp-frame-upload').addEventListener('change', function(e) {
+        // Reset pilihan dropdown template
+        document.getElementById('jiapp-template-select').value = "";
+        
+        const jiapp_file = e.target.files[0];
+        if (!jiapp_file) return;
+        
+        // Validasi ekstensi PNG
+        if(jiapp_file.type !== "image/png") {
+            alert("Gagal! Frame / Twibbon wajib berformat PNG transparan.");
+            this.value = ""; // Kosongkan input
+            return;
+        }
+
+        const jiapp_reader = new FileReader();
+        jiapp_reader.onload = function(event) {
+            const jiapp_img = new Image();
+            jiapp_img.onload = function() {
+                jiapp_frameImg = jiapp_img;
+                jiapp_renderCanvas();
+            }
+            jiapp_img.src = event.target.result;
+        }
+        jiapp_reader.readAsDataURL(jiapp_file);
+    });
+
+    // Event: User Pilih Template dari Dropdown
+    document.getElementById('jiapp-template-select').addEventListener('change', function(e) {
+        const jiapp_url = e.target.value;
+        
+        if (!jiapp_url) {
+            // Jika memilih opsi kosong dan tidak ada custom frame, hapus frame dari canvas
+            if(!document.getElementById('jiapp-frame-upload').files.length){
+                jiapp_frameImg = null;
+                jiapp_renderCanvas();
+            }
+            return;
+        }
+        
+        // Reset input file custom frame
+        document.getElementById('jiapp-frame-upload').value = "";
+
+        const jiapp_img = new Image();
+        jiapp_img.crossOrigin = "anonymous"; // Penting agar gambar dari URL bisa didownload
+        jiapp_img.onload = function() {
+            jiapp_frameImg = jiapp_img;
+            jiapp_renderCanvas();
+        }
+        jiapp_img.src = jiapp_url;
+    });
+
+    // Event: Tombol Download
+    document.getElementById('jiapp-btn-download').addEventListener('click', function() {
+        if(!jiapp_userImg && !jiapp_frameImg) {
+            alert("Harap masukkan foto dan pilih twibbon terlebih dahulu!");
+            return;
+        }
+        
+        // Konversi Canvas ke Data URL PNG
+        const jiapp_dataURL = jiapp_canvas.toDataURL('image/png');
+        
+        // Proses Download
+        const jiapp_link = document.createElement('a');
+        jiapp_link.download = 'Twibbon-JIAARA.png';
+        jiapp_link.href = jiapp_dataURL;
+        document.body.appendChild(jiapp_link);
+        jiapp_link.click();
+        document.body.removeChild(jiapp_link);
+    });
+
+    // Event: Tombol Reset
+    document.getElementById('jiapp-btn-clear').addEventListener('click', function() {
+        // Hapus variabel gambar
+        jiapp_userImg = null;
+        jiapp_frameImg = null;
+        
+        // Reset form input
+        document.getElementById('jiapp-photo-upload').value = "";
+        document.getElementById('jiapp-frame-upload').value = "";
+        document.getElementById('jiapp-template-select').value = "";
+        
+        // Bersihkan canvas
+        jiapp_ctx.clearRect(0, 0, jiapp_canvas.width, jiapp_canvas.height);
+    });
+</script>
