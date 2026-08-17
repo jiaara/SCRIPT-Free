@@ -1,0 +1,144 @@
+<div id="sitemap-generator">
+  <h3>Blogger XML Sitemap Generator</h3>
+  <p>Masukkan URL blog Anda untuk menghasilkan sitemap lengkap untuk Google Search Console.</p>
+  
+  <div class="input-group">
+    <input type="url" id="blogUrl" placeholder="https://nama-blog.blogspot.com" required>
+    <button class="btn-generate" onclick="generateSitemap()">Generate Sitemap</button>
+  </div>
+
+  <div id="result-area" style="display:none;">
+    <p style="color: #ff4d4d; font-weight: bold;">Salin baris di bawah ini dan tempelkan di Google Search Console:</p>
+    <textarea id="sitemapOutput" readonly rows="8"></textarea>
+    <button class="btn-copy" onclick="copyToClipboard()">Salin ke Clipboard</button>
+  </div>
+</div>
+
+<style>
+  #sitemap-generator {
+    background: #000000; /* Latar Belakang Hitam */
+    padding: 30px;
+    border-radius: 12px;
+    border: 1px solid #333;
+    font-family: 'Roboto', Arial, sans-serif;
+    color: #ffffff;
+    max-width: 800px;
+    margin: 20px auto;
+    box-shadow: 0 10px 30px rgba(255, 0, 0, 0.1);
+  }
+
+  #sitemap-generator h3 {
+    color: #ff0000; /* Judul Merah */
+    margin-top: 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  #sitemap-generator p {
+    color: #b0b0b0;
+    font-size: 14px;
+  }
+
+  .input-group { 
+    display: flex; 
+    gap: 12px; 
+    margin-bottom: 25px; 
+    margin-top: 20px;
+  }
+
+  #blogUrl { 
+    flex: 1; 
+    padding: 12px; 
+    border: 1px solid #333; 
+    border-radius: 6px; 
+    background: #121212; 
+    color: #fff; 
+    outline: none;
+    transition: border-color 0.3s;
+  }
+
+  #blogUrl:focus {
+    border-color: #ff0000; /* Border merah saat fokus */
+  }
+
+  /* Tombol Utama Merah */
+  button.btn-generate { 
+    padding: 12px 24px; 
+    background: #ff0000; 
+    color: white; 
+    border: none; 
+    border-radius: 6px; 
+    cursor: pointer; 
+    font-weight: bold;
+    transition: all 0.3s ease;
+  }
+
+  button.btn-generate:hover { 
+    background: #cc0000; 
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 0, 0, 0.4);
+  }
+
+  /* Area Hasil */
+  textarea { 
+    width: 100%; 
+    padding: 15px; 
+    background: #1a1a1a; 
+    color: #00ff00; /* Teks hijau neon agar kontras */
+    border: 1px solid #444; 
+    border-radius: 6px; 
+    font-family: 'Courier New', monospace; 
+    resize: vertical;
+    box-sizing: border-box;
+    margin-top: 10px;
+    outline: none;
+  }
+
+  /* Tombol Salin */
+  button.btn-copy { 
+    margin-top: 15px; 
+    background: transparent; 
+    color: #ff4d4d; 
+    border: 1px solid #ff4d4d; 
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+
+  button.btn-copy:hover { 
+    background: rgba(255, 0, 0, 0.1);
+  }
+</style>
+
+<script>
+function generateSitemap() {
+  let url = document.getElementById('blogUrl').value.trim();
+  if (!url) { alert('Masukkan URL blog terlebih dahulu!'); return; }
+  
+  url = url.replace(/\/$/, "");
+  
+  const resultArea = document.getElementById('result-area');
+  const output = document.getElementById('sitemapOutput');
+  
+  let sitemaps = [
+    url + "/atom.xml?redirect=false&start-index=1&max-results=500",
+    url + "/atom.xml?redirect=false&start-index=501&max-results=500",
+    url + "/atom.xml?redirect=false&start-index=1001&max-results=500",
+    url + "/atom.xml?redirect=false&start-index=1501&max-results=500",
+    url + "/atom.xml?redirect=false&start-index=2001&max-results=500"
+  ];
+  
+  output.value = sitemaps.join('\n');
+  resultArea.style.display = 'block';
+}
+
+function copyToClipboard() {
+  const copyText = document.getElementById("sitemapOutput");
+  copyText.select();
+  document.execCommand("copy");
+  alert("Sitemap berhasil disalin!");
+}
+</script>
+
