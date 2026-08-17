@@ -1,0 +1,220 @@
+<!-- CSS Aplikasi JIAARA -->
+<style>
+    .jiapp-container {
+        background-color: #000000;
+        color: #ffffff;
+        padding: 20px;
+        border-radius: 10px;
+        max-width: 400px;
+        margin: 20px auto;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+        border: 1px solid #222;
+    }
+
+    .jiapp-title {
+        color: #ff0000;
+        text-align: center;
+        margin-bottom: 2px;
+        font-size: 22px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .jiapp-subtitle {
+        color: #ff0000;
+        text-align: center;
+        font-size: 11px;
+        margin-bottom: 20px;
+        display: block;
+        font-weight: bold;
+        letter-spacing: 0.5px;
+    }
+
+    .jiapp-input-group {
+        margin-bottom: 15px;
+    }
+
+    .jiapp-input-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 13px;
+        color: #bbb;
+    }
+
+    .jiapp-input-group input {
+        width: 100%;
+        padding: 12px;
+        border-radius: 6px;
+        border: 1px solid #333;
+        background-color: #1a1a1a;
+        color: #fff;
+        box-sizing: border-box;
+        outline: none;
+    }
+
+    .jiapp-input-group input:focus {
+        border-color: #ff0000;
+    }
+
+    .jiapp-btn-hitung {
+        width: 100%;
+        background-color: #ff0000;
+        color: white;
+        border: none;
+        padding: 14px;
+        border-radius: 6px;
+        font-weight: bold;
+        cursor: pointer;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        margin-top: 5px;
+    }
+
+    .jiapp-btn-hitung:hover {
+        background-color: #cc0000;
+        transform: translateY(-1px);
+    }
+
+    .jiapp-result-box {
+        margin-top: 25px;
+        padding-top: 20px;
+        border-top: 2px dashed #333;
+    }
+
+    .jiapp-final-price-label {
+        text-align: center;
+        font-size: 14px;
+        color: #aaa;
+        margin-bottom: 5px;
+    }
+
+    .jiapp-final-price-value {
+        color: #007bff; /* Warna Biru Sesuai Instruksi */
+        text-align: center;
+        font-size: 30px;
+        font-weight: 900;
+        margin-bottom: 20px;
+    }
+
+    .jiapp-details {
+        background-color: #111;
+        padding: 15px;
+        border-radius: 8px;
+        font-size: 13px;
+        border: 1px solid #222;
+    }
+
+    .jiapp-detail-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #222;
+    }
+
+    .jiapp-detail-item:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+        color: #ffcc00; /* Warna kuning untuk selisih agar menonjol */
+    }
+
+    .jiapp-label-text {
+        color: #ddd;
+    }
+</style>
+
+<!-- Struktur HTML Aplikasi -->
+<div class="jiapp-container">
+    <div class="jiapp-title">Kalkulator Diskon & Pajak</div>
+    <span class="jiapp-subtitle">Aplikasi oleh JIAARA</span>
+
+    <div class="jiapp-input-group">
+        <label>Harga Asli (Rp)</label>
+        <input type="number" id="jiapp-harga-asli" placeholder="Masukkan harga...">
+    </div>
+
+    <div class="jiapp-input-group">
+        <label>Diskon (%)</label>
+        <input type="number" id="jiapp-diskon-persen" placeholder="0">
+    </div>
+
+    <div class="jiapp-input-group">
+        <label>Pajak (%)</label>
+        <input type="number" id="jiapp-pajak-persen" placeholder="0">
+    </div>
+
+    <button class="jiapp-btn-hitung" onclick="jiappProsesHitung()">HITUNG</button>
+
+    <div id="jiapp-result-area" class="jiapp-result-box" style="display:none;">
+        <div class="jiapp-final-price-label">HARGA FINAL</div>
+        <div id="jiapp-total-akhir" class="jiapp-final-price-value">Rp 0</div>
+        
+        <div class="jiapp-details">
+            <div class="jiapp-detail-item">
+                <span class="jiapp-label-text">Potongan Diskon:</span>
+                <span id="jiapp-info-diskon" style="color: #ff4d4d;">- Rp 0</span>
+            </div>
+            <div class="jiapp-detail-item">
+                <span class="jiapp-label-text">Nominal Pajak:</span>
+                <span id="jiapp-info-pajak" style="color: #4da6ff;">+ Rp 0</span>
+            </div>
+            <div class="jiapp-detail-item">
+                <span class="jiapp-label-text">Selisih (Diskon vs Pajak):</span>
+                <span id="jiapp-info-selisih">Rp 0</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript Aplikasi JIAARA -->
+<script>
+    function jiappFormatRupiah(angka) {
+        return new Intl.NumberFormat('id-ID', {
+            style: 'currency',
+            currency: 'IDR',
+            minimumFractionDigits: 0
+        }).format(angka);
+    }
+
+    function jiappProsesHitung() {
+        // Ambil Nilai Input
+        const jiappHargaInput = parseFloat(document.getElementById('jiapp-harga-asli').value) || 0;
+        const jiappDiskonInput = parseFloat(document.getElementById('jiapp-diskon-persen').value) || 0;
+        const jiappPajakInput = parseFloat(document.getElementById('jiapp-pajak-persen').value) || 0;
+
+        // Logika Perhitungan
+        // 1. Hitung Nominal Diskon
+        const jiappNominalDiskon = jiappHargaInput * (jiappDiskonInput / 100);
+        const jiappHargaSetelahDiskon = jiappHargaInput - jiappNominalDiskon;
+
+        // 2. Hitung Nominal Pajak (diterapkan setelah diskon)
+        const jiappNominalPajak = jiappHargaSetelahDiskon * (jiappPajakInput / 100);
+
+        // 3. Harga Akhir
+        const jiappTotalAkhir = jiappHargaSetelahDiskon + jiappNominalPajak;
+
+        // 4. Hitung Selisih
+        const jiappSelisih = Math.abs(jiappNominalDiskon - jiappNominalPajak);
+        let jiappKeteranganSelisih = "";
+        
+        if (jiappNominalDiskon > jiappNominalPajak) {
+            jiappKeteranganSelisih = "(Hemat " + jiappFormatRupiah(jiappSelisih) + ")";
+        } else if (jiappNominalPajak > jiappNominalDiskon) {
+            jiappKeteranganSelisih = "(Tambah " + jiappFormatRupiah(jiappSelisih) + ")";
+        } else {
+            jiappKeteranganSelisih = "Rp 0";
+        }
+
+        // Update Tampilan UI
+        document.getElementById('jiapp-total-akhir').innerText = jiappFormatRupiah(jiappTotalAkhir);
+        document.getElementById('jiapp-info-diskon').innerText = "- " + jiappFormatRupiah(jiappNominalDiskon);
+        document.getElementById('jiapp-info-pajak').innerText = "+ " + jiappFormatRupiah(jiappNominalPajak);
+        document.getElementById('jiapp-info-selisih').innerText = jiappKeteranganSelisih;
+
+        // Tampilkan Box Hasil
+        document.getElementById('jiapp-result-area').style.display = 'block';
+    }
+</script>
