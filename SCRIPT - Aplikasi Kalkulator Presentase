@@ -1,0 +1,210 @@
+<div id="perc-calc-tool">
+  <h2 class="title-main"><i class="fas fa-percentage"></i> Percentage Calculator</h2>
+  <p class="subtitle">Alat hitung persentase cepat, akurat, dan mudah digunakan.</p>
+
+  <div class="calc-wrapper">
+    <div class="calc-box">
+      <div class="input-group">
+        <span>Berapa</span>
+        <input type="number" id="p1" placeholder="10">
+        <span>% dari</span>
+        <input type="number" id="n1" placeholder="200">
+        <span>?</span>
+      </div>
+      <div class="result-group">
+        <button onclick="calc1()">Hitung</button>
+        <div class="res-field">
+          <small>Hasil:</small>
+          <input type="text" id="res1" readonly>
+        </div>
+      </div>
+    </div>
+
+    <div class="calc-box">
+      <div class="input-group">
+        <input type="number" id="n2" placeholder="50">
+        <span>adalah berapa persen dari</span>
+        <input type="number" id="n3" placeholder="500">
+        <span>?</span>
+      </div>
+      <div class="result-group">
+        <button onclick="calc2()">Hitung</button>
+        <div class="res-field">
+          <small>Hasil:</small>
+          <div class="input-symbol">
+            <input type="text" id="res2" readonly>
+            <span class="symbol">%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="calc-box">
+      <div class="input-group">
+        <span>Berapa % kenaikan/penurunan dari</span>
+        <input type="number" id="n4" placeholder="100">
+        <span>ke</span>
+        <input type="number" id="n5" placeholder="150">
+        <span>?</span>
+      </div>
+      <div class="result-group">
+        <button onclick="calc3()">Hitung</button>
+        <div class="res-field">
+          <small>Hasil:</small>
+          <div class="input-symbol">
+            <input type="text" id="res3" readonly>
+            <span class="symbol">%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-reset" onclick="resetAll()"><i class="fas fa-sync-alt"></i> Reset Semua</button>
+  </div>
+
+  <div class="spoiler-wrap">
+    <div class="spoiler-btn" onclick="toggleSp()">
+      <span><i class="fas fa-info-circle"></i> Cara Pemasangan Kode <small id="sp-txt">(buka)</small></span>
+    </div>
+    <div id="sp-body" class="spoiler-content">
+      <ol>
+        <li>Salin seluruh kode script ini.</li>
+        <li>Masuk ke Dashboard Blogger > <b>Halaman</b> > <b>Baru</b>.</li>
+        <li>Ubah mode ke <b>Tampilan HTML</b>.</li>
+        <li>Tempel kode, beri judul, lalu klik <b>Publikasikan</b>.</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+  #perc-calc-tool { max-width: 850px; margin: 20px auto; font-family: 'Segoe UI', sans-serif; color: #fff; padding: 10px; background: #000; border-radius: 12px; }
+  .title-main { text-align: center; margin-bottom: 5px; font-weight: 700; color: #ff0000; text-transform: uppercase; letter-spacing: 1px; }
+  .subtitle { text-align: center; color: #666; margin-bottom: 30px; font-size: 14px; }
+
+  /* Wrapper Design */
+  .calc-wrapper { 
+    background: #0a0a0a; 
+    border: 1px solid #222; 
+    border-radius: 15px; 
+    padding: 25px; 
+    box-shadow: 0 15px 40px rgba(255, 0, 0, 0.05); 
+  }
+  
+  .calc-box { 
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between; 
+    padding: 20px; 
+    background: #111; 
+    border-radius: 10px; 
+    margin-bottom: 15px; 
+    border: 1px solid #222; 
+    flex-wrap: wrap; 
+    gap: 15px; 
+    transition: border-color 0.3s;
+  }
+  .calc-box:hover { border-color: #444; }
+  
+  .input-group { display: flex; align-items: center; gap: 8px; flex: 1; font-size: 14px; flex-wrap: wrap; color: #ccc; }
+  .result-group { display: flex; align-items: center; gap: 15px; }
+
+  /* Input Fields */
+  input[type="number"], input[type="text"] { 
+    background: #000; 
+    border: 1px solid #333; 
+    border-radius: 6px; 
+    color: #fff; 
+    padding: 8px 12px; 
+    width: 90px; 
+    outline: none; 
+    transition: 0.3s; 
+    text-align: center; 
+  }
+  input:focus { border-color: #ff0000; }
+  input[readonly] { color: #ff0000; font-weight: bold; border-color: #400; background: #050505; }
+
+  .res-field { display: flex; flex-direction: column; align-items: flex-start; }
+  .res-field small { font-size: 10px; color: #555; text-transform: uppercase; margin-bottom: 3px; font-weight: bold; }
+  .input-symbol { position: relative; display: flex; align-items: center; }
+  .symbol { position: absolute; right: 10px; color: #ff0000; font-weight: bold; }
+
+  /* Buttons */
+  button { 
+    background: #d90429; 
+    color: #fff; 
+    border: none; 
+    padding: 10px 20px; 
+    border-radius: 6px; 
+    cursor: pointer; 
+    font-weight: 700; 
+    transition: 0.3s; 
+    text-transform: uppercase;
+    font-size: 12px;
+  }
+  button:hover { background: #ff0000; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(255, 0, 0, 0.3); }
+  
+  .btn-reset { 
+    width: 100%; 
+    background: transparent; 
+    color: #666; 
+    border: 1px solid #333; 
+    margin-top: 10px; 
+  }
+  .btn-reset:hover { background: #222; color: #fff; border-color: #fff; }
+
+  /* Spoiler */
+  .spoiler-wrap { margin-top: 25px; border: 1px solid #222; border-radius: 8px; overflow: hidden; }
+  .spoiler-btn { background: #111; padding: 15px; cursor: pointer; font-size: 14px; display: flex; align-items: center; color: #888; }
+  .spoiler-btn:hover { color: #ff0000; }
+  .spoiler-content { display: none; padding: 20px; background: #000; color: #666; font-size: 14px; border-top: 1px solid #222; line-height: 1.6; }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .calc-box { flex-direction: column; text-align: center; }
+    .input-group { justify-content: center; }
+    .result-group { width: 100%; justify-content: center; flex-direction: column; }
+    .res-field { align-items: center; }
+  }
+</style>
+
+<script>
+  function calc1() {
+    const p = document.getElementById('p1').value;
+    const n = document.getElementById('n1').value;
+    if(p && n) document.getElementById('res1').value = (p / 100 * n).toLocaleString();
+  }
+
+  function calc2() {
+    const n1 = document.getElementById('n2').value;
+    const n2 = document.getElementById('n3').value;
+    if(n1 && n2) document.getElementById('res2').value = ((n1 / n2) * 100).toFixed(2);
+  }
+
+  function calc3() {
+    const n1 = parseFloat(document.getElementById('n4').value);
+    const n2 = parseFloat(document.getElementById('n5').value);
+    if(!isNaN(n1) && !isNaN(n2)) {
+      const res = ((n2 - n1) / n1) * 100;
+      document.getElementById('res3').value = res.toFixed(2);
+    }
+  }
+
+  function resetAll() {
+    document.querySelectorAll('input').forEach(i => i.value = "");
+  }
+
+  function toggleSp() {
+    const b = document.getElementById('sp-body');
+    const t = document.getElementById('sp-txt');
+    if (b.style.display === "block") {
+      b.style.display = "none";
+      t.innerText = "(buka)";
+    } else {
+      b.style.display = "block";
+      t.innerText = "(tutup)";
+    }
+  }
+</script>
