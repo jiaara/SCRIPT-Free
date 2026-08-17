@@ -1,0 +1,79 @@
+<div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 800px; margin: 20px auto; padding: 25px; border: 1px solid #333; border-radius: 12px; background-color: #000; box-shadow: 0 10px 40px rgba(255,0,0,0.1); color: #fff;">
+    
+    <h2 style="margin-top: 0; text-align: center; color: #ff0000; margin-bottom: 25px; letter-spacing: 1px; text-transform: uppercase;">MD5 Hash Generator</h2>
+    
+    <div style="display: flex; flex-wrap: wrap; gap: 20px;">
+        
+        <div style="flex: 1; min-width: 300px;">
+            <label style="display: block; font-size: 14px; font-weight: bold; margin-bottom: 8px; color: #888;">Plain Text:</label>
+            <textarea id="inputText" placeholder="Masukkan teks di sini..." style="width: 100%; height: 150px; padding: 12px; border: 1px solid #333; border-radius: 8px; font-size: 14px; resize: none; box-sizing: border-box; transition: 0.3s; background-color: #0a0a0a; color: #fff;"></textarea>
+            
+            <button onclick="generateMD5()" style="width: 100%; margin-top: 15px; padding: 12px; background-color: #ff0000; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 16px; transition: 0.3s; letter-spacing: 1px;">
+                GENERATE MD5
+            </button>
+        </div>
+
+        <div style="flex: 1; min-width: 300px;">
+            <label style="display: block; font-size: 14px; font-weight: bold; margin-bottom: 8px; color: #888;">MD5 Hash Result:</label>
+            <textarea id="outputHash" readonly placeholder="Hasil hash akan muncul di sini..." style="width: 100%; height: 150px; padding: 12px; border: 1px solid #333; border-radius: 8px; background-color: #050505; font-family: 'Courier New', monospace; font-size: 15px; color: #00ff41; resize: none; box-sizing: border-box;"></textarea>
+            
+            <button id="copyBtn" onclick="copyHash()" style="width: 100%; margin-top: 15px; padding: 12px; background-color: #222; color: white; border: 1px solid #444; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.3s;">
+                <span>📋</span> Copy Hash Result
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+
+<script>
+    function generateMD5() {
+        const text = document.getElementById('inputText').value;
+        const output = document.getElementById('outputHash');
+        
+        if (text.trim() === "") {
+            output.value = "";
+            return;
+        }
+
+        const hash = CryptoJS.MD5(text).toString();
+        output.value = hash;
+    }
+
+    function copyHash() {
+        const hashResult = document.getElementById('outputHash');
+        const btn = document.getElementById('copyBtn');
+
+        if (hashResult.value === "") return;
+
+        hashResult.select();
+        hashResult.setSelectionRange(0, 99999);
+        
+        try {
+            document.execCommand('copy');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = "✅ Copied to Clipboard!";
+            btn.style.backgroundColor = "#ff0000";
+            btn.style.borderColor = "#ff0000";
+            
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.style.backgroundColor = "#222";
+                btn.style.borderColor = "#444";
+            }, 2000);
+        } catch (err) {
+            alert('Gagal menyalin teks.');
+        }
+    }
+
+    document.getElementById('inputText').addEventListener('input', generateMD5);
+</script>
+
+<style>
+    button:hover { opacity: 0.8; transform: translateY(-1px); }
+    button:active { transform: translateY(1px); }
+    textarea:focus { outline: none; border-color: #ff0000 !important; box-shadow: 0 0 8px rgba(255, 0, 0, 0.3); }
+    textarea::placeholder { color: #444; }
+</style>
+
