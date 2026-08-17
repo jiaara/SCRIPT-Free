@@ -1,0 +1,50 @@
+<div id="base64-converter" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 500px; margin: 20px auto; padding: 25px; background-color: #1a1a1a; color: #ffffff; border: 1px solid #333; border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.5);">
+    <h3 style="margin-top: 0; color: #ff4d4d; border-bottom: 1px solid #333; padding-bottom: 10px;">Base64 Converter</h3>
+    
+    <div style="margin-bottom: 15px;">
+        <label style="display: block; margin-bottom: 8px; font-weight: bold; color: #ccc;">Mode:</label>
+        <select id="mode" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #444; background-color: #2d2d2d; color: white; cursor: pointer; outline: none;">
+            <option value="encode">Plain Text to Base64 (Encode)</option>
+            <option value="decode">Base64 to Plain Text (Decode)</option>
+        </select>
+    </div>
+
+    <div style="margin-bottom: 15px;">
+        <label style="display: block; margin-bottom: 8px; font-weight: bold; color: #ccc;">Input:</label>
+        <textarea id="input" rows="4" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #444; background-color: #2d2d2d; color: #fff; box-sizing: border-box; resize: vertical; outline: none;" placeholder="Masukkan teks di sini..."></textarea>
+    </div>
+
+    <button onclick="process()" style="width: 100%; padding: 12px; background-color: #d90429; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 16px; transition: background-color 0.3s ease; text-transform: uppercase; letter-spacing: 1px;">GENERATE</button>
+
+    <div style="margin-top: 20px;">
+        <label style="display: block; margin-bottom: 8px; font-weight: bold; color: #ccc;">Hasil:</label>
+        <textarea id="output" rows="4" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #333; background-color: #000; color: #00ff41; box-sizing: border-box; font-family: monospace; resize: vertical;" readonly></textarea>
+    </div>
+
+    <script>
+        function process() {
+            const mode = document.getElementById('mode').value;
+            const input = document.getElementById('input').value;
+            const output = document.getElementById('output');
+
+            if (!input.trim()) {
+                alert("Silakan masukkan teks terlebih dahulu.");
+                return;
+            }
+
+            try {
+                if (mode === 'encode') {
+                    output.value = btoa(unescape(encodeURIComponent(input)));
+                } else {
+                    output.value = decodeURIComponent(escape(atob(input)));
+                }
+            } catch (e) {
+                alert("Error: Input tidak valid untuk format Base64.");
+                output.value = "";
+            }
+        }
+    </script>
+</div>
+
+
+<p style="text-align: center;"><b>ADA KRITIK, SARAN DAN REQUEST APLIKASI?</b></p><p style="text-align: center;"><i>SILAHKAN KOMEN DI KOLOM KOMENTAR DI BAWAH INI</i></p>
