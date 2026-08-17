@@ -1,0 +1,201 @@
+
+
+<!-- JIAARA Patio Calculator Wrapper -->
+<div class="jiapp-main-container">
+    <div class="jiapp-card">
+        <h2 class="jiapp-title">Kalkulator Patio Base</h2>
+        <p class="jiapp-subtitle">Aplikasi oleh JIAARA</p>
+
+        <div class="jiapp-input-group">
+            <label class="jiapp-label">Area Teras (Panjang x Lebar)</label>
+            <div class="jiapp-row">
+                <input type="number" id="jiapp-area-l" placeholder="Panjang" class="jiapp-input">
+                <input type="number" id="jiapp-area-w" placeholder="Lebar" class="jiapp-input">
+                <select id="jiapp-area-unit" class="jiapp-select">
+                    <option value="1000">mm</option>
+                    <option value="100">cm</option>
+                    <option value="1" selected>m</option>
+                    <option value="0.001">km</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="jiapp-input-group">
+            <label class="jiapp-label">Ukuran Ubin (Panjang x Lebar)</label>
+            <div class="jiapp-row">
+                <input type="number" id="jiapp-tile-l" placeholder="Panjang" class="jiapp-input">
+                <input type="number" id="jiapp-tile-w" placeholder="Lebar" class="jiapp-input">
+                <select id="jiapp-tile-unit" class="jiapp-select">
+                    <option value="1000">mm</option>
+                    <option value="100" selected>cm</option>
+                    <option value="1">m</option>
+                    <option value="0.001">km</option>
+                </select>
+            </div>
+        </div>
+
+        <button onclick="jiapp_hitungKalkulator()" class="jiapp-btn">Hitung Kebutuhan</button>
+
+        <div id="jiapp-result-box" class="jiapp-result-container" style="display:none;">
+            <p class="jiapp-res-text">Total Ubin Dibutuhkan: <span id="jiapp-total-tiles" class="jiapp-blue-text">0</span> Pcs</p>
+            <p class="jiapp-res-text">Luas Area: <span id="jiapp-total-area" class="jiapp-blue-text">0</span> m²</p>
+            <hr class="jiapp-divider">
+            <p class="jiapp-waste-info">Informasi Sisa Ubin (Limbah 10%): <br><span id="jiapp-waste-tiles">0</span> Pcs</p>
+            <p class="jiapp-note">*Sangat disarankan membeli total <span id="jiapp-total-safe">0</span> ubin untuk cadangan potong/pecah.</p>
+        </div>
+    </div>
+</div>
+
+<style>
+    .jiapp-main-container {
+        display: flex;
+        justify-content: center;
+        padding: 20px;
+        font-family: Arial, sans-serif;
+    }
+    .jiapp-card {
+        background-color: #000000;
+        color: #ffffff;
+        padding: 25px;
+        border-radius: 12px;
+        width: 100%;
+        max-width: 450px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+    .jiapp-title {
+        color: #ff0000;
+        margin: 0 0 5px 0;
+        font-size: 24px;
+        text-align: center;
+        text-transform: uppercase;
+        font-weight: bold;
+    }
+    .jiapp-subtitle {
+        color: #ff0000;
+        font-size: 13px;
+        text-align: center;
+        margin-bottom: 25px;
+        font-style: italic;
+    }
+    .jiapp-input-group {
+        margin-bottom: 15px;
+    }
+    .jiapp-label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 14px;
+        font-weight: bold;
+    }
+    .jiapp-row {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 10px;
+    }
+    .jiapp-input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #444;
+        border-radius: 5px;
+        background: #222;
+        color: white;
+        font-size: 14px;
+    }
+    .jiapp-select {
+        padding: 10px;
+        border-radius: 5px;
+        background: #333;
+        color: white;
+        border: 1px solid #444;
+        cursor: pointer;
+    }
+    .jiapp-btn {
+        width: 100%;
+        padding: 12px;
+        background-color: #ff0000;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-weight: bold;
+        cursor: pointer;
+        font-size: 16px;
+        transition: 0.3s;
+        margin-top: 10px;
+    }
+    .jiapp-btn:hover {
+        background-color: #cc0000;
+    }
+    .jiapp-result-container {
+        margin-top: 20px;
+        padding: 15px;
+        border: 1px dashed #ff0000;
+        border-radius: 8px;
+        background: #111;
+    }
+    .jiapp-res-text {
+        margin: 5px 0;
+        font-size: 16px;
+    }
+    .jiapp-blue-text {
+        color: #00aaff; /* Biru terang agar terlihat jelas di background hitam */
+        font-weight: bold;
+        font-size: 18px;
+    }
+    .jiapp-divider {
+        border: 0;
+        border-top: 1px solid #333;
+        margin: 10px 0;
+    }
+    .jiapp-waste-info {
+        font-size: 14px;
+        color: #ddd;
+    }
+    #jiapp-waste-tiles {
+        color: #00aaff;
+        font-weight: bold;
+    }
+    .jiapp-note {
+        font-size: 11px;
+        color: #888;
+        margin-top: 10px;
+    }
+</style>
+
+<script>
+    function jiapp_hitungKalkulator() {
+        // Ambil Input Luas Area
+        const jiapp_al = parseFloat(document.getElementById('jiapp-area-l').value);
+        const jiapp_aw = parseFloat(document.getElementById('jiapp-area-w').value);
+        const jiapp_aUnit = parseFloat(document.getElementById('jiapp-area-unit').value);
+
+        // Ambil Input Ukuran Ubin
+        const jiapp_tl = parseFloat(document.getElementById('jiapp-tile-l').value);
+        const jiapp_tw = parseFloat(document.getElementById('jiapp-tile-w').value);
+        const jiapp_tUnit = parseFloat(document.getElementById('jiapp-tile-unit').value);
+
+        if (isNaN(jiapp_al) || isNaN(jiapp_aw) || isNaN(jiapp_tl) || isNaN(jiapp_tw)) {
+            alert("Silakan masukkan angka yang valid.");
+            return;
+        }
+
+        // Konversi semua ke meter (m)
+        // Jika input dalam mm, bagi 1000. Jika cm, bagi 100. dst.
+        const jiapp_areaInM2 = (jiapp_al / jiapp_aUnit) * (jiapp_aw / jiapp_aUnit);
+        const jiapp_tileInM2 = (jiapp_tl / jiapp_tUnit) * (jiapp_tw / jiapp_tUnit);
+
+        // Hitung jumlah ubin
+        const jiapp_totalExact = jiapp_areaInM2 / jiapp_tileInM2;
+        const jiapp_totalNeeded = Math.ceil(jiapp_totalExact);
+        
+        // Hitung limbah (10%)
+        const jiapp_waste = Math.ceil(jiapp_totalNeeded * 0.1);
+        const jiapp_safeTotal = jiapp_totalNeeded + jiapp_waste;
+
+        // Tampilkan Hasil
+        document.getElementById('jiapp-result-box').style.display = 'block';
+        document.getElementById('jiapp-total-tiles').innerText = jiapp_totalNeeded.toLocaleString('id-ID');
+        document.getElementById('jiapp-total-area').innerText = jiapp_areaInM2.toFixed(2);
+        document.getElementById('jiapp-waste-tiles').innerText = jiapp_waste.toLocaleString('id-ID');
+        document.getElementById('jiapp-total-safe').innerText = jiapp_safeTotal.toLocaleString('id-ID');
+    }
+</script>
+
