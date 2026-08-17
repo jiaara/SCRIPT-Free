@@ -1,0 +1,98 @@
+<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 800px; margin: 20px auto; padding: 25px; background: #000000; border: 1px solid #333; border-radius: 12px; box-shadow: 0 4px 20px rgba(255,0,0,0.1); color: #ffffff;">
+    
+    <h2 style="margin-top: 0; color: #ff0000; border-bottom: 2px solid #222; padding-bottom: 10px; letter-spacing: 1px;">iFrame Generator</h2>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 20px;">
+        <div style="flex: 1; min-width: 300px;">
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; font-size: 14px; font-weight: 600; margin-bottom: 5px; color: #aaa;">URL Website</label>
+                <input type="text" id="if-url" placeholder="https://example.com" value="https://www.wikipedia.org" style="width: 100%; padding: 10px; border: 1px solid #333; border-radius: 6px; box-sizing: border-box; background: #111; color: #fff; outline: none;">
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+                <div>
+                    <label style="display: block; font-size: 14px; font-weight: 600; margin-bottom: 5px; color: #aaa;">Lebar (px/%)</label>
+                    <input type="text" id="if-width" value="100%" style="width: 100%; padding: 10px; border: 1px solid #333; border-radius: 6px; box-sizing: border-box; background: #111; color: #fff; outline: none;">
+                </div>
+                <div>
+                    <label style="display: block; font-size: 14px; font-weight: 600; margin-bottom: 5px; color: #aaa;">Tinggi (px)</label>
+                    <input type="text" id="if-height" value="400" style="width: 100%; padding: 10px; border: 1px solid #333; border-radius: 6px; box-sizing: border-box; background: #111; color: #fff; outline: none;">
+                </div>
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; font-size: 14px; font-weight: 600; margin-bottom: 5px; color: #aaa;">Ketebalan Border (px)</label>
+                <input type="number" id="if-border" value="0" min="0" style="width: 100%; padding: 10px; border: 1px solid #333; border-radius: 6px; box-sizing: border-box; background: #111; color: #fff; outline: none;">
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="font-size: 14px; cursor: pointer; color: #ccc;"><input type="checkbox" id="if-scroll" checked> Aktifkan Scrollbar</label>
+            </div>
+
+            <button onclick="generateIframe()" style="width: 100%; padding: 12px; background: #ff0000; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: background 0.2s; text-transform: uppercase; letter-spacing: 1px;">
+                GENERATE IFRAME
+            </button>
+        </div>
+
+        <div style="flex: 1; min-width: 300px;">
+            <label style="display: block; font-size: 14px; font-weight: 600; margin-bottom: 5px; color: #aaa;">Generated Code</label>
+            <textarea id="if-code" readonly placeholder="Klik Generate untuk melihat kode..." style="width: 100%; height: 120px; padding: 10px; background: #0a0a0a; border: 1px solid #333; border-radius: 6px; font-family: monospace; font-size: 12px; resize: none; box-sizing: border-box; color: #00ff41;"></textarea>
+            
+            <button onclick="copyIframeCode()" id="copy-btn" style="width: 100%; margin-top: 10px; padding: 12px; background: #222; color: #666; border: 1px solid #333; border-radius: 6px; font-weight: bold; cursor: not-allowed; transition: 0.3s;" disabled>
+                Salin Kode
+            </button>
+        </div>
+    </div>
+
+    <div id="preview-container" style="margin-top: 25px; border-top: 2px dashed #222; padding-top: 20px;">
+        <p style="font-size: 13px; color: #666; margin-bottom: 10px;">Preview:</p>
+        <div id="iframe-render" style="background: #050505; min-height: 200px; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 8px; border: 1px solid #222;">
+            <span style="color: #444;">Belum ada pratinjau</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    function generateIframe() {
+        const url = document.getElementById('if-url').value || 'about:blank';
+        const width = document.getElementById('if-width').value;
+        const height = document.getElementById('if-height').value;
+        const border = document.getElementById('if-border').value;
+        const scroll = document.getElementById('if-scroll').checked ? 'yes' : 'no';
+
+        const w = isNaN(width) ? width : width + 'px';
+        const h = isNaN(height) ? height : height + 'px';
+
+        const code = `<iframe src="${url}" width="${w}" height="${h}" frameborder="${border}" scrolling="${scroll}" allowfullscreen></iframe>`;
+        
+        document.getElementById('if-code').value = code;
+        document.getElementById('iframe-render').innerHTML = code;
+
+        const copyBtn = document.getElementById('copy-btn');
+        copyBtn.disabled = false;
+        copyBtn.style.background = "transparent";
+        copyBtn.style.color = "#ff0000";
+        copyBtn.style.border = "1px solid #ff0000";
+        copyBtn.style.cursor = "pointer";
+    }
+
+    function copyIframeCode() {
+        const copyText = document.getElementById('if-code');
+        if(!copyText.value) return;
+        
+        copyText.select();
+        copyText.setSelectionRange(0, 99999);
+        document.execCommand("copy");
+        
+        const btn = document.getElementById('copy-btn');
+        const originalText = btn.innerText;
+        btn.innerText = "Tersalin!";
+        btn.style.background = "#ff0000";
+        btn.style.color = "#fff";
+        setTimeout(() => {
+            btn.innerText = originalText;
+            btn.style.background = "transparent";
+            btn.style.color = "#ff0000";
+        }, 2000);
+    }
+</script>
