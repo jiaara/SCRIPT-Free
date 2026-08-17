@@ -1,0 +1,311 @@
+
+
+<!-- JIAARA Application Start -->
+<div id="jiapp-main-wrapper" class="jiapp-main-container">
+    <style>
+        .jiapp-main-container {
+            background-color: #000;
+            color: #fff;
+            padding: 20px;
+            border-radius: 15px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 600px;
+            margin: 20px auto;
+            border: 2px solid #ff0000;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.2);
+        }
+
+        .jiapp-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .jiapp-title {
+            color: #ff0000;
+            font-size: 28px;
+            font-weight: bold;
+            margin: 0;
+            text-transform: uppercase;
+        }
+
+        .jiapp-subtitle {
+            color: #ff0000;
+            font-size: 14px;
+            margin: 5px 0 20px 0;
+            letter-spacing: 1px;
+        }
+
+        .jiapp-input-group {
+            margin-bottom: 15px;
+        }
+
+        .jiapp-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .jiapp-select, .jiapp-input, .jiapp-textarea {
+            width: 100%;
+            padding: 10px;
+            background: #1a1a1a;
+            border: 1px solid #ff0000;
+            color: #fff;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        .jiapp-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .jiapp-row > div {
+            flex: 1;
+        }
+
+        .jiapp-wheel-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 20px auto;
+        }
+
+        #jiapp-canvas {
+            border: 5px solid #ff0000;
+            border-radius: 50%;
+            background-color: #111;
+        }
+
+        .jiapp-pointer {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 30px solid #ff0000;
+            z-index: 10;
+        }
+
+        .jiapp-btn {
+            background-color: #ff0000;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.3s;
+            text-transform: uppercase;
+        }
+
+        .jiapp-btn:hover {
+            background-color: #cc0000;
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+        }
+
+        .jiapp-btn:disabled {
+            background-color: #555;
+            cursor: not-allowed;
+        }
+
+        #jiapp-result {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #ff0000;
+            min-height: 30px;
+        }
+
+        .jiapp-hidden {
+            display: none;
+        }
+    </style>
+
+    <div class="jiapp-header">
+        <h1 class="jiapp-title">RANDOM PICKER</h1>
+        <div class="jiapp-subtitle">Aplikasi oleh JIAARA</div>
+    </div>
+
+    <div class="jiapp-input-group">
+        <label class="jiapp-label">Tipe Input:</label>
+        <select id="jiapp-type-selector" class="jiapp-select" onchange="jiappToggleInput()">
+            <option value="names">Daftar Nama (Baris Baru)</option>
+            <option value="numbers">Rentang Angka</option>
+        </select>
+    </div>
+
+    <div id="jiapp-name-input-section">
+        <div class="jiapp-input-group">
+            <label class="jiapp-label">Masukkan Nama:</label>
+            <textarea id="jiapp-names" class="jiapp-textarea" rows="5" placeholder="Contoh:&#10;Andi&#10;Budi&#10;Caca"></textarea>
+        </div>
+    </div>
+
+    <div id="jiapp-number-input-section" class="jiapp-hidden">
+        <div class="jiapp-row">
+            <div>
+                <label class="jiapp-label">Min:</label>
+                <input type="number" id="jiapp-min" class="jiapp-input" value="1">
+            </div>
+            <div>
+                <label class="jiapp-label">Max:</label>
+                <input type="number" id="jiapp-max" class="jiapp-input" value="10">
+            </div>
+        </div>
+    </div>
+
+    <div class="jiapp-input-group">
+        <label class="jiapp-label">Durasi Putar (Detik):</label>
+        <input type="number" id="jiapp-duration" class="jiapp-input" value="5" min="1" max="20">
+    </div>
+
+    <div class="jiapp-wheel-container">
+        <div class="jiapp-pointer"></div>
+        <canvas id="jiapp-canvas" width="300" height="300"></canvas>
+    </div>
+
+    <button id="jiapp-spin-btn" class="jiapp-btn" onclick="jiappSpinWheel()">PUTAR SEKARANG</button>
+    
+    <div id="jiapp-result"></div>
+
+    <script>
+        const jiappCanvas = document.getElementById('jiapp-canvas');
+        const jiappCtx = jiappCanvas.getContext('2d');
+        let jiappItems = [];
+        let jiappCurrentRotation = 0;
+        let jiappIsSpinning = false;
+
+        // Warna segmen (berulang)
+        const jiappColors = ['#ff0000', '#000000', '#330000', '#660000', '#990000', '#cc0000'];
+
+        function jiappToggleInput() {
+            const type = document.getElementById('jiapp-type-selector').value;
+            document.getElementById('jiapp-name-input-section').classList.toggle('jiapp-hidden', type !== 'names');
+            document.getElementById('jiapp-number-input-section').classList.toggle('jiapp-hidden', type !== 'numbers');
+            jiappUpdateWheel();
+        }
+
+        function jiappGetItems() {
+            const type = document.getElementById('jiapp-type-selector').value;
+            if (type === 'names') {
+                return document.getElementById('jiapp-names').value.split('\n').filter(name => name.trim() !== '');
+            } else {
+                const min = parseInt(document.getElementById('jiapp-min').value);
+                const max = parseInt(document.getElementById('jiapp-max').value);
+                const nums = [];
+                if (max > min) {
+                    for (let i = min; i <= max; i++) nums.push(i.toString());
+                }
+                return nums;
+            }
+        }
+
+        function jiappDrawWheel(angle = 0) {
+            const items = jiappGetItems();
+            if (items.length === 0) {
+                jiappCtx.clearRect(0, 0, jiappCanvas.width, jiappCanvas.height);
+                return;
+            }
+
+            const arcSize = (2 * Math.PI) / items.length;
+            jiappCtx.clearRect(0, 0, jiappCanvas.width, jiappCanvas.height);
+
+            items.forEach((item, i) => {
+                const segmentAngle = i * arcSize + angle;
+                
+                // Draw Segment
+                jiappCtx.beginPath();
+                jiappCtx.fillStyle = jiappColors[i % jiappColors.length];
+                jiappCtx.moveTo(150, 150);
+                jiappCtx.arc(150, 150, 145, segmentAngle, segmentAngle + arcSize);
+                jiappCtx.lineTo(150, 150);
+                jiappCtx.fill();
+                
+                // Draw Border on segment
+                jiappCtx.strokeStyle = '#ff0000';
+                jiappCtx.lineWidth = 2;
+                jiappCtx.stroke();
+
+                // Draw Text
+                jiappCtx.save();
+                jiappCtx.translate(150, 150);
+                jiappCtx.rotate(segmentAngle + arcSize / 2);
+                jiappCtx.textAlign = 'right';
+                jiappCtx.fillStyle = '#fff';
+                jiappCtx.font = 'bold 14px Arial';
+                jiappCtx.fillText(item.substring(0, 12), 130, 5);
+                jiappCtx.restore();
+            });
+        }
+
+        function jiappUpdateWheel() {
+            jiappDrawWheel(jiappCurrentRotation);
+        }
+
+        function jiappSpinWheel() {
+            if (jiappIsSpinning) return;
+            const items = jiappGetItems();
+            if (items.length < 2) {
+                alert("Harap masukkan minimal 2 pilihan!");
+                return;
+            }
+
+            jiappIsSpinning = true;
+            document.getElementById('jiapp-spin-btn').disabled = true;
+            document.getElementById('jiapp-result').innerText = "Memutar...";
+
+            const duration = parseInt(document.getElementById('jiapp-duration').value) * 1000;
+            const extraSpins = 5 + Math.random() * 5;
+            const totalRotation = extraSpins * 2 * Math.PI;
+            const startTime = performance.now();
+            const startRotation = jiappCurrentRotation;
+
+            function animate(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                // Ease out cubic function
+                const easeOut = 1 - Math.pow(1 - progress, 3);
+                
+                jiappCurrentRotation = startRotation + (easeOut * totalRotation);
+                jiappDrawWheel(jiappCurrentRotation);
+
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                } else {
+                    jiappIsSpinning = false;
+                    document.getElementById('jiapp-spin-btn').disabled = false;
+                    
+                    // Hitung pemenang (pointer di atas = -90 derajat)
+                    const normalizedRotation = (jiappCurrentRotation % (2 * Math.PI));
+                    const arcSize = (2 * Math.PI) / items.length;
+                    
+                    // Pointer ada di posisi 1.5 * Math.PI (270 derajat atau -90 derajat)
+                    let winnerIndex = Math.floor((1.5 * Math.PI - (jiappCurrentRotation % (2 * Math.PI))) / arcSize) % items.length;
+                    if (winnerIndex < 0) winnerIndex += items.length;
+                    
+                    document.getElementById('jiapp-result').innerText = "Hasil: " + items[winnerIndex];
+                }
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        // Listener untuk update wheel saat input berubah
+        document.getElementById('jiapp-names').addEventListener('input', jiappUpdateWheel);
+        document.getElementById('jiapp-min').addEventListener('input', jiappUpdateWheel);
+        document.getElementById('jiapp-max').addEventListener('input', jiappUpdateWheel);
+
+        // Initial Draw
+        jiappUpdateWheel();
+    </script>
+</div>
+<!-- JIAARA Application End -->
