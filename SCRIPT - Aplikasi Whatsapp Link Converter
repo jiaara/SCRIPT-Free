@@ -1,0 +1,150 @@
+
+
+<style>
+  /* Mengatur tampilan utama kontainer */
+  .wa-generator-wrap {
+    background-color: #0a0a0a; /* Latar belakang hitam */
+    padding: 25px;
+    border-radius: 8px;
+    font-family: Arial, sans-serif;
+    color: #ffffff;
+    max-width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #222;
+  }
+  
+  /* Styling untuk teks judul */
+  .wa-generator-wrap h3 {
+    color: #ff3333; /* Warna judul merah */
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 22px;
+    font-weight: bold;
+  }
+
+  .wa-input-group {
+    margin-bottom: 15px;
+  }
+
+  .wa-input-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: #cccccc;
+  }
+
+  /* Styling form input dan textarea */
+  .wa-input-group input,
+  .wa-input-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #333;
+    border-radius: 5px;
+    background-color: #1a1a1a;
+    color: #ffffff;
+    box-sizing: border-box;
+    font-family: inherit;
+  }
+
+  .wa-input-group input:focus,
+  .wa-input-group textarea:focus {
+    outline: none;
+    border-color: #ff3333;
+  }
+
+  .wa-input-group textarea {
+    resize: vertical;
+    min-height: 100px;
+  }
+
+  /* Styling tombol generate */
+  .wa-btn-red {
+    background-color: #ff3333; /* Tombol merah */
+    color: #ffffff;
+    border: none;
+    padding: 14px 20px;
+    width: 100%;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: background-color 0.3s ease;
+  }
+
+  .wa-btn-red:hover {
+    background-color: #cc0000;
+  }
+
+  /* Kotak hasil link */
+  .wa-result-container {
+    margin-top: 20px;
+    display: none; /* Disembunyikan sebelum tombol diklik */
+    padding: 15px;
+    background-color: #1a1a1a;
+    border-radius: 5px;
+    border-left: 4px solid #ff3333;
+  }
+
+  .wa-result-container input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 8px;
+    background: #000000;
+    border: 1px solid #444;
+    color: #4caf50; /* Warna link hijau agar kontras dan terbaca */
+    box-sizing: border-box;
+  }
+</style>
+
+<div class="wa-generator-wrap">
+  <h3>Buat Link WhatsApp</h3>
+  
+  <div class="wa-input-group">
+    <label>Nomor WhatsApp (Gunakan 62, contoh: 6281542662648)</label>
+    <input id="wa-number" required="" type="number" />
+  </div>
+  
+  <div class="wa-input-group">
+    <label>Pesan Otomatis</label>
+    <textarea id="wa-text"></textarea>
+  </div>
+  
+  <button class="wa-btn-red" onclick="generateLink()">Generate Link</button>
+
+  <div class="wa-result-container" id="wa-result-box">
+    <label>Link Anda Siap:</label>
+    <input id="wa-final-link" onclick="this.select()" readonly="" type="text" />
+  </div>
+</div>
+
+<script>
+  function generateLink() {
+    // Mengambil nilai dari input
+    let phoneNum = document.getElementById('wa-number').value.trim();
+    let msgText = document.getElementById('wa-text').value.trim();
+    
+    // Validasi input nomor kosong
+    if (!phoneNum) {
+      alert('Harap masukkan nomor WhatsApp terlebih dahulu.');
+      return;
+    }
+
+    // Membersihkan karakter non-angka dan mengubah awalan 0 menjadi 62 jika pengguna lupa
+    phoneNum = phoneNum.replace(/\D/g, '');
+    if (phoneNum.startsWith('0')) {
+      phoneNum = '62' + phoneNum.substring(1);
+    }
+
+    // Mengubah spasi dan enter menjadi format URL (URL Encoding)
+    let encodedMsg = encodeURIComponent(msgText);
+    
+    // Menggabungkan nomor dan pesan menjadi link wa.me
+    let finalUrl = `https://wa.me/${phoneNum}?text=${encodedMsg}`;
+
+    // Menampilkan hasil
+    document.getElementById('wa-final-link').value = finalUrl;
+    document.getElementById('wa-result-box').style.display = 'block';
+  }
+</script>
