@@ -1,0 +1,424 @@
+<!-- CSS APLIKASI HPP JIAARA -->
+<style>
+    /* Reset & Container Utama */
+    #jiapp-app-wrapper {
+        background-color: #121212; /* Box hitam */
+        color: #ffffff;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        padding: 20px;
+        border-radius: 10px;
+        box-sizing: border-box;
+        max-width: 800px;
+        margin: 0 auto;
+        line-height: 1.5;
+    }
+
+    #jiapp-app-wrapper * {
+        box-sizing: border-box;
+    }
+
+    /* Tipografi */
+    .jiapp-title {
+        color: #ff3333; /* Judul merah */
+        font-size: 24px;
+        font-weight: bold;
+        margin: 0 0 5px 0;
+        text-align: center;
+    }
+
+    .jiapp-subtitle {
+        color: #ff3333; /* Subjudul merah */
+        font-size: 14px;
+        margin: 0 0 25px 0;
+        text-align: center;
+        opacity: 0.9;
+    }
+
+    /* Layout Cards/Sections */
+    .jiapp-section {
+        background-color: #1e1e1e;
+        border: 1px solid #333;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+
+    .jiapp-section-title {
+        font-size: 16px;
+        font-weight: bold;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #e0e0e0;
+    }
+
+    /* Form Inputs */
+    .jiapp-form-group {
+        margin-bottom: 15px;
+    }
+
+    .jiapp-label {
+        display: block;
+        font-size: 13px;
+        color: #aaaaaa;
+        margin-bottom: 5px;
+    }
+
+    .jiapp-input {
+        width: 100%;
+        padding: 10px;
+        background-color: #2a2a2a;
+        border: 1px solid #444;
+        color: #ffffff;
+        border-radius: 6px;
+        font-size: 14px;
+        transition: border-color 0.3s;
+    }
+
+    .jiapp-input:focus {
+        outline: none;
+        border-color: #ff3333;
+    }
+
+    .jiapp-hint {
+        font-size: 11px;
+        color: #888;
+        margin-top: 5px;
+        display: block;
+    }
+
+    /* Bahan List Layout */
+    .jiapp-bahan-row {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1.5fr auto;
+        gap: 10px;
+        align-items: end;
+        margin-bottom: 10px;
+        padding-bottom: 10px;
+        border-bottom: 1px dashed #333;
+    }
+
+    @media (max-width: 600px) {
+        .jiapp-bahan-row {
+            grid-template-columns: 1fr;
+            gap: 5px;
+            background: #252525;
+            padding: 10px;
+            border-radius: 6px;
+        }
+    }
+
+    /* Buttons */
+    .jiapp-btn {
+        background-color: #ff3333; /* Tombol merah */
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 14px;
+        transition: background-color 0.2s;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+    }
+
+    .jiapp-btn:hover {
+        background-color: #cc0000;
+    }
+
+    .jiapp-btn-outline {
+        background-color: transparent;
+        border: 1px solid #ff3333;
+        color: #ff3333;
+    }
+
+    .jiapp-btn-outline:hover {
+        background-color: #ff3333;
+        color: white;
+    }
+
+    .jiapp-btn-delete {
+        background-color: transparent;
+        color: #ff3333;
+        border: none;
+        font-size: 18px;
+        cursor: pointer;
+        padding: 5px 10px;
+        font-weight: bold;
+    }
+
+    .jiapp-btn-delete:hover {
+        color: #ff7777;
+        transform: scale(1.1);
+    }
+
+    /* Grid for Operasional */
+    .jiapp-grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+
+    @media (max-width: 600px) {
+        .jiapp-grid-2 {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Total & Result Area */
+    .jiapp-total-box {
+        background-color: #2a2a2a;
+        padding: 15px;
+        border-radius: 6px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: bold;
+        margin-top: 15px;
+    }
+
+    .jiapp-action-bar {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+    }
+
+    .jiapp-btn-hitung {
+        flex-grow: 1;
+        padding: 15px;
+        font-size: 16px;
+    }
+
+    #jiapp-hasil-container {
+        display: none;
+        background-color: #ff3333;
+        color: white;
+        padding: 20px;
+        border-radius: 8px;
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    .jiapp-hasil-angka {
+        font-size: 32px;
+        font-weight: bold;
+        margin: 10px 0;
+    }
+</style>
+
+<!-- HTML APLIKASI HPP JIAARA -->
+<div id="jiapp-app-wrapper">
+    <h1 class="jiapp-title">Kalkulator HPP</h1>
+    <p class="jiapp-subtitle">Aplikasi oleh JIAARA</p>
+
+    <!-- Informasi Produk -->
+    <div class="jiapp-section">
+        <div class="jiapp-section-title">Informasi Produk</div>
+        <div class="jiapp-form-group">
+            <label class="jiapp-label">Nama Produk</label>
+            <input type="text" id="jiapp-input-produk" class="jiapp-input" placeholder="Contoh: Es Teh, Nasi Goreng">
+        </div>
+    </div>
+
+    <!-- Bahan yang Dibeli -->
+    <div class="jiapp-section">
+        <div class="jiapp-section-title">🛒 Bahan yang Dibeli</div>
+        
+        <div id="jiapp-bahan-container">
+            <!-- Row bahan akan di-generate JS disini -->
+        </div>
+
+        <div style="text-align: center; margin-top: 15px;">
+            <button class="jiapp-btn jiapp-btn-outline" onclick="jiappTambahBahan()">+ Tambah Bahan</button>
+        </div>
+
+        <div class="jiapp-total-box">
+            <span>Total Pembelian Bahan:</span>
+            <span id="jiapp-display-total-bahan">Rp 0</span>
+        </div>
+    </div>
+
+    <!-- Biaya Operasional -->
+    <div class="jiapp-section">
+        <div class="jiapp-section-title">⚙️ Biaya Operasional</div>
+        <div class="jiapp-grid-2">
+            <div class="jiapp-form-group">
+                <label class="jiapp-label">Biaya Tenaga Kerja per Unit (Rp)</label>
+                <input type="number" id="jiapp-input-tk" class="jiapp-input" placeholder="0" min="0">
+                <span class="jiapp-hint">💡 Gaji per hari ÷ jumlah produk per hari</span>
+            </div>
+            <div class="jiapp-form-group">
+                <label class="jiapp-label">Biaya Overhead per Unit (Rp)</label>
+                <input type="number" id="jiapp-input-overhead" class="jiapp-input" placeholder="0" min="0">
+                <span class="jiapp-hint">💡 Listrik/sewa bulanan ÷ jumlah produksi bulanan</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Jumlah Produk -->
+    <div class="jiapp-section">
+        <div class="jiapp-section-title">📦 Jumlah Produk yang Dihasilkan</div>
+        <div class="jiapp-form-group">
+            <label class="jiapp-label">Jumlah Produk (Unit)</label>
+            <input type="number" id="jiapp-input-jumlah" class="jiapp-input" placeholder="Contoh: 100" min="1">
+            <span class="jiapp-hint">💡 Dari total bahan di atas, bisa menghasilkan berapa unit/porsi?</span>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="jiapp-action-bar">
+        <button class="jiapp-btn jiapp-btn-hitung" onclick="jiappHitungHPP()">➗ Hitung HPP</button>
+        <button class="jiapp-btn jiapp-btn-outline" onclick="jiappIsiContoh()">📄 Contoh</button>
+        <button class="jiapp-btn jiapp-btn-outline" onclick="jiappResetSemua()">🔄 Reset</button>
+    </div>
+
+    <!-- Hasil -->
+    <div id="jiapp-hasil-container">
+        <div>Harga Pokok Penjualan (HPP) untuk 1 unit <span id="jiapp-hasil-nama"></span> adalah:</div>
+        <div class="jiapp-hasil-angka" id="jiapp-hasil-akhir">Rp 0</div>
+        <div style="font-size: 13px;">*Ini adalah modal dasar per porsi/unit. Tentukan harga jual di atas angka ini untuk mendapatkan profit.</div>
+    </div>
+</div>
+
+<!-- JAVASCRIPT APLIKASI HPP JIAARA -->
+<script>
+    // Variabel Global
+    let jiappTotalBahanCounter = 0;
+
+    // Fungsi Format Rupiah
+    function jiappFormatRupiah(angka) {
+        return 'Rp ' + new Intl.NumberFormat('id-ID').format(angka);
+    }
+
+    // Fungsi Tambah Baris Bahan
+    function jiappTambahBahan(nama = '', satuan = '', harga = '') {
+        jiappTotalBahanCounter++;
+        const rowId = `jiapp-bahan-row-${jiappTotalBahanCounter}`;
+        
+        const rowHTML = `
+            <div class="jiapp-bahan-row" id="${rowId}">
+                <div>
+                    <label class="jiapp-label">Nama Bahan</label>
+                    <input type="text" class="jiapp-input jiapp-nama-bahan" placeholder="Cth: Gula Pasir" value="${nama}">
+                </div>
+                <div>
+                    <label class="jiapp-label">Satuan</label>
+                    <input type="text" class="jiapp-input" placeholder="Cth: 1 kg" value="${satuan}">
+                </div>
+                <div>
+                    <label class="jiapp-label">Harga Beli Total (Rp)</label>
+                    <input type="number" class="jiapp-input jiapp-harga-bahan" placeholder="0" min="0" value="${harga}" oninput="jiappKalkulasiTotalBahan()">
+                </div>
+                <div style="text-align: center;">
+                    <label class="jiapp-label" style="opacity:0">X</label>
+                    <button class="jiapp-btn-delete" onclick="jiappHapusBahan('${rowId}')" title="Hapus Bahan">&#10006;</button>
+                </div>
+            </div>
+        `;
+
+        document.getElementById('jiapp-bahan-container').insertAdjacentHTML('beforeend', rowHTML);
+        jiappKalkulasiTotalBahan();
+    }
+
+    // Fungsi Hapus Baris Bahan
+    function jiappHapusBahan(rowId) {
+        const row = document.getElementById(rowId);
+        if (row) {
+            row.remove();
+            jiappKalkulasiTotalBahan();
+        }
+    }
+
+    // Fungsi Hitung Total Pembelian Bahan (Otomatis saat input)
+    function jiappKalkulasiTotalBahan() {
+        const inputsHarga = document.querySelectorAll('.jiapp-harga-bahan');
+        let total = 0;
+        
+        inputsHarga.forEach(input => {
+            const nilai = parseFloat(input.value) || 0;
+            total += nilai;
+        });
+
+        document.getElementById('jiapp-display-total-bahan').innerText = jiappFormatRupiah(total);
+        return total;
+    }
+
+    // Fungsi Utama: Hitung HPP
+    function jiappHitungHPP() {
+        const namaProduk = document.getElementById('jiapp-input-produk').value || 'Produk';
+        const totalBahan = jiappKalkulasiTotalBahan();
+        const tkPerUnit = parseFloat(document.getElementById('jiapp-input-tk').value) || 0;
+        const overheadPerUnit = parseFloat(document.getElementById('jiapp-input-overhead').value) || 0;
+        const jumlahProduk = parseFloat(document.getElementById('jiapp-input-jumlah').value) || 0;
+
+        if (jumlahProduk <= 0) {
+            alert('Mohon masukkan Jumlah Produk yang dihasilkan (minimal 1).');
+            return;
+        }
+
+        // Rumus: (Total Bahan / Jumlah Produk) + Tenaga Kerja + Overhead
+        const biayaBahanPerUnit = totalBahan / jumlahProduk;
+        const hppPerUnit = biayaBahanPerUnit + tkPerUnit + overheadPerUnit;
+
+        // Tampilkan Hasil
+        document.getElementById('jiapp-hasil-nama').innerText = namaProduk;
+        document.getElementById('jiapp-hasil-akhir').innerText = jiappFormatRupiah(hppPerUnit);
+        document.getElementById('jiapp-hasil-container').style.display = 'block';
+        
+        // Scroll ke hasil
+        document.getElementById('jiapp-hasil-container').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Fungsi Isi Data Contoh
+    function jiappIsiContoh() {
+        // Reset dulu
+        jiappResetSemua();
+
+        // Isi Produk
+        document.getElementById('jiapp-input-produk').value = 'Es Teh Manis';
+
+        // Hapus baris default kosong, isi dengan contoh
+        document.getElementById('jiapp-bahan-container').innerHTML = '';
+        jiappTambahBahan('Teh Celup', '1 Box', '15000');
+        jiappTambahBahan('Gula Pasir', '1 Kg', '18000');
+        jiappTambahBahan('Es Batu', '1 Kristal', '12000');
+        jiappTambahBahan('Cup Plastik', '100 Pcs', '25000');
+
+        // Isi Operasional & Jumlah
+        document.getElementById('jiapp-input-tk').value = '200';
+        document.getElementById('jiapp-input-overhead').value = '150';
+        document.getElementById('jiapp-input-jumlah').value = '100';
+
+        // Langsung hitung
+        jiappHitungHPP();
+    }
+
+    // Fungsi Reset
+    function jiappResetSemua() {
+        document.getElementById('jiapp-input-produk').value = '';
+        document.getElementById('jiapp-input-tk').value = '';
+        document.getElementById('jiapp-input-overhead').value = '';
+        document.getElementById('jiapp-input-jumlah').value = '';
+        
+        document.getElementById('jiapp-bahan-container').innerHTML = '';
+        document.getElementById('jiapp-hasil-container').style.display = 'none';
+        
+        jiappTotalBahanCounter = 0;
+        jiappTambahBahan(); // Tambah 1 baris kosong
+    }
+
+    // Inisialisasi saat pertama kali dimuat
+    jiappTambahBahan();
+
+</script>
+
+
+<div> <br/><br/></div>
+<div style="display: none;">
+  <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjNVfspRxGAdcJTOqXp6AfiF3OdpTHjL6o6Q4OfWTVU8kc3hE6TQU_INUs5jtqQTv_kyu8JNb_VXbBoaUGgZgbHv6nibYTWjemKBh4yzsKy9U_v69m5dyZQxNLFCrDSrINY4Wa5LnAElQRHpXR5aC1kschxsxhg4kBFcscmKvHIekzHbms/s1600/JIAARA%20DIGITAL%20-%20Aplikasi%20Kalkulator%20Harga%20Pokok%20Penjualan%20(HPP).jpg" />
+</div>
