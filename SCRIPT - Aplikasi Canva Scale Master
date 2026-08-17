@@ -1,0 +1,103 @@
+<div id="canva-scaler" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 500px; margin: 20px auto; padding: 25px; border-radius: 15px; background: #1a1a1a; box-shadow: 0 10px 30px rgba(0,0,0,0.5); color: #eeeeee;">
+    
+    <h2 style="text-align: center; color: #ff3131; margin-top: 0; text-transform: uppercase; letter-spacing: 1px;">Canva Scale Master</h2>
+    <p style="font-size: 0.9em; text-align: center; color: #bbb;">Otomatis menyesuaikan batas 150cm sesuai orientasi.</p>
+
+    <div style="margin-bottom: 15px;">
+        <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #ff3131;">Lebar Target (cm):</label>
+        <input type="number" id="inputW" placeholder="Contoh: 450" style="width: 100%; padding: 12px; border: 1px solid #444; border-radius: 8px; box-sizing: border-box; background: #2d2d2d; color: white;">
+    </div>
+
+    <div style="margin-bottom: 20px;">
+        <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #ff3131;">Tinggi Target (cm):</label>
+        <input type="number" id="inputH" placeholder="Contoh: 150" style="width: 100%; padding: 12px; border: 1px solid #444; border-radius: 8px; box-sizing: border-box; background: #2d2d2d; color: white;">
+    </div>
+
+    <button onclick="calculateScale()" style="width: 100%; padding: 14px; background: #ff3131; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; font-size: 1em;">HITUNG UKURAN AMAN</button>
+
+    <div id="resultArea" style="margin-top: 25px; display: none; border-top: 2px dashed #444; padding-top: 15px;">
+        <h3 style="margin-bottom: 10px; font-size: 1.1em; color: #00ff88;">✅ Hasil Konversi (Skala <span id="scaleRatio"></span>)</h3>
+        
+        <table style="width: 100%; border-collapse: collapse; background: #2d2d2d; border-radius: 8px; overflow: hidden; color: white;">
+            <tr style="background: #444; font-size: 0.9em;">
+                <th style="padding: 10px; text-align: left;">Satuan</th>
+                <th style="padding: 10px; text-align: left;">Lebar</th>
+                <th style="padding: 10px; text-align: left;">Tinggi</th>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #444;">Centimeter (cm)</td>
+                <td style="padding: 10px; border-bottom: 1px solid #444; font-weight: bold; color: #ff3131;" id="resCMW"></td>
+                <td style="padding: 10px; border-bottom: 1px solid #444; font-weight: bold; color: #ff3131;" id="resCMH"></td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #444;">Milimeter (mm)</td>
+                <td style="padding: 10px; border-bottom: 1px solid #444;" id="resMMW"></td>
+                <td style="padding: 10px; border-bottom: 1px solid #444;" id="resMMH"></td>
+            </tr>
+            <tr>
+                <td style="padding: 10px;">Pixels (96 DPI)</td>
+                <td style="padding: 10px;" id="resPXW"></td>
+                <td style="padding: 10px;" id="resPXH"></td>
+            </tr>
+        </table>
+        
+        <p style="font-size: 0.85em; color: #ff9f43; margin-top: 15px; font-style: italic; line-height: 1.4;">
+            *Tips: Saat mendownload dari Canva, gunakan file tipe <b>PDF Print</b> agar kualitas tetap tajam saat diperbesar kembali.
+        </p>
+    </div>
+</div>
+
+<script>
+function calculateScale() {
+    const w = parseFloat(document.getElementById('inputW').value);
+    const h = parseFloat(document.getElementById('inputH').value);
+    
+    if(!w || !h) return alert("Masukkan angka yang valid");
+
+    // Tentukan batas dinamis berdasarkan orientasi
+    // Jika Lebar > Tinggi (Lanskap), maka batasnya 150x116
+    // Jika Tinggi > Lebar (Potret), maka batasnya 116x150
+    let limitW, limitH;
+
+    if (w >= h) {
+        limitW = 150;
+        limitH = 116;
+    } else {
+        limitW = 116;
+        limitH = 150;
+    }
+
+    // Hitung rasio pengecilan
+    let ratioW = w / limitW;
+    let ratioH = h / limitH;
+    
+    // Pilih rasio terbesar agar kedua sisi masuk dalam batas aman
+    let ratio = Math.max(ratioW, ratioH);
+
+    // Jika ukuran asli sudah lebih kecil dari batas, jangan diperbesar (ratio minimal 1)
+    if (ratio < 1) ratio = 1;
+
+    const scaledW = w / ratio;
+    const scaledH = h / ratio;
+
+    // Tampilkan Hasil
+    document.getElementById('resCMW').innerText = scaledW.toFixed(2) + " cm";
+    document.getElementById('resCMH').innerText = scaledH.toFixed(2) + " cm";
+    
+    document.getElementById('resMMW').innerText = (scaledW * 10).toFixed(0) + " mm";
+    document.getElementById('resMMH').innerText = (scaledH * 10).toFixed(0) + " mm";
+    
+    document.getElementById('resPXW').innerText = Math.round(scaledW * 37.795) + " px";
+    document.getElementById('resPXH').innerText = Math.round(scaledH * 37.795) + " px";
+    
+    document.getElementById('scaleRatio').innerText = "1:" + ratio.toFixed(2);
+    document.getElementById('resultArea').style.display = 'block';
+}
+</script>
+
+
+
+<div> <br/><br/></div>
+<div style="display: none;">
+  <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEja4DHJpauryrDzPRMor75avFmmoISp-vvMgpaYj57qBjE_8it3upIAKqn5mCoxGLJOmDW8VEKxcqicBYmbGArD9S1Q4f6LoOkGBUNn42PgalvilNrFr5usn0uCf8-oUIBwX504Sfq599QfgHzxmLxm9uv40OXkmMWJSgfkhZM7rsWYPec/s1600/JIAARA%20DIGITAL%20-%20Aplikasi%20Kalkulator%20Skala%20Kanvas%20Canva.jpg" />
+</div>
