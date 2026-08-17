@@ -1,0 +1,79 @@
+<div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 20px auto; padding: 25px; border: 1px solid #333; border-radius: 12px; background-color: #000000; box-shadow: 0 8px 30px rgba(255,0,0,0.1);">
+    
+    <h2 style="margin-top: 0; text-align: center; color: #ff0000; margin-bottom: 25px; letter-spacing: 1px;">Roman Numeral Converter</h2>
+
+    <div style="margin-bottom: 25px; padding: 15px; border: 1px solid #222; border-radius: 8px; background: #0a0a0a;">
+        <label style="display: block; font-size: 14px; font-weight: bold; margin-bottom: 8px; color: #888;">Decimal Number:</label>
+        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+            <input type="number" id="decimalInput" placeholder="Contoh: 2024" style="flex: 1; padding: 12px; border: 1px solid #333; border-radius: 6px; font-size: 16px; background: #111; color: #fff; outline: none;">
+            <button onclick="convertToRoman()" style="padding: 10px 20px; background-color: #ff0000; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s; text-transform: uppercase;">Convert</button>
+        </div>
+        <div id="romanResultBox" style="display: none; align-items: center; justify-content: space-between; background: #000; padding: 10px; border: 1px dashed #ff0000; border-radius: 6px;">
+            <span id="romanResultText" style="font-weight: bold; color: #00ff41; font-size: 18px; font-family: monospace;"></span>
+            <button onclick="copyToClipboard('romanResultText')" style="background: #222; color: white; border: 1px solid #444; padding: 5px 10px; border-radius: 4px; font-size: 12px; cursor: pointer;">Copy</button>
+        </div>
+    </div>
+
+    <div style="padding: 15px; border: 1px solid #222; border-radius: 8px; background: #0a0a0a;">
+        <label style="display: block; font-size: 14px; font-weight: bold; margin-bottom: 8px; color: #888;">Roman Numeral:</label>
+        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+            <input type="text" id="romanInput" placeholder="Contoh: MMXXIV" style="flex: 1; padding: 12px; border: 1px solid #333; border-radius: 6px; font-size: 16px; text-transform: uppercase; background: #111; color: #fff; outline: none;">
+            <button onclick="convertToDecimal()" style="padding: 10px 20px; background-color: #ff0000; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s; text-transform: uppercase;">Convert</button>
+        </div>
+        <div id="decimalResultBox" style="display: none; align-items: center; justify-content: space-between; background: #000; padding: 10px; border: 1px dashed #ff0000; border-radius: 6px;">
+            <span id="decimalResultText" style="font-weight: bold; color: #00ff41; font-size: 18px; font-family: monospace;"></span>
+            <button onclick="copyToClipboard('decimalResultText')" style="background: #222; color: white; border: 1px solid #444; padding: 5px 10px; border-radius: 4px; font-size: 12px; cursor: pointer;">Copy</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function convertToRoman() {
+        let num = document.getElementById('decimalInput').value;
+        if (num < 1 || num > 3999) {
+            alert("Masukkan angka antara 1 dan 3999");
+            return;
+        }
+        const lookup = {M:1000,CM:900,D:500,CD:400,C:100,XC:90,L:50,XL:40,X:10,IX:9,V:5,IV:4,I:1};
+        let roman = '';
+        for (let i in lookup) {
+            while (num >= lookup[i]) {
+                roman += i;
+                num -= lookup[i];
+            }
+        }
+        document.getElementById('romanResultText').innerText = roman;
+        document.getElementById('romanResultBox').style.display = 'flex';
+    }
+
+    function convertToDecimal() {
+        const roman = document.getElementById('romanInput').value.toUpperCase();
+        const lookup = {I:1, V:5, X:10, L:50, C:100, D:500, M:1000};
+        let decimal = 0;
+        for (let i = 0; i < roman.length; i++) {
+            let cur = lookup[roman[i]];
+            let next = lookup[roman[i+1]];
+            if (cur < next) {
+                decimal += next - cur;
+                i++;
+            } else {
+                decimal += cur;
+            }
+        }
+        if (isNaN(decimal) || decimal === 0) {
+            alert("Format Romawi tidak valid");
+            return;
+        }
+        document.getElementById('decimalResultText').innerText = decimal;
+        document.getElementById('decimalResultBox').style.display = 'flex';
+    }
+
+    function copyToClipboard(elementId) {
+        const text = document.getElementById(elementId).innerText;
+        navigator.clipboard.writeText(text).then(() => {
+            alert("Hasil berhasil disalin: " + text);
+        });
+    }
+</script>
+
+<style>
