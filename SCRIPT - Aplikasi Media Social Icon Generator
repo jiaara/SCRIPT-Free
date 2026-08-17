@@ -1,0 +1,201 @@
+<div id="social-tool-container">
+  <h3>Social Media Icon Generator</h3>
+  <p style="margin-top: -10px; margin-bottom: 20px; font-weight: bold; color: #aaa; font-size: 13px;">Aplikasi Oleh JIAARA</p>
+  
+  <p>Pilih sosmed, masukkan <b>username</b> saja, dan salin kodenya.</p>
+
+  <div class="input-row">
+    <select id="iconSelect">
+      <option value="fa-facebook-f">Facebook</option>
+      <option value="fa-twitter">Twitter / X</option>
+      <option value="fa-instagram">Instagram</option>
+      <option value="fa-youtube">YouTube</option>
+      <option value="fa-whatsapp">WhatsApp (No HP)</option>
+      <option value="fa-tiktok">TikTok</option>
+    </select>
+    <input type="text" id="socialLink" placeholder="Masukkan Username / ID">
+    <button onclick="addIcon()" class="btn-main">Tambah</button>
+  </div>
+
+  <hr style="border: 0; border-top: 1px solid #333; margin: 20px 0;">
+
+  <h4>Preview:</h4>
+  <div id="previewArea" class="preview-box"></div>
+
+  <h4>Kode HTML:</h4>
+  <textarea id="outputCode" readonly rows="6" placeholder="Kode akan muncul di sini..."></textarea>
+  <button onclick="copyCode()" class="btn-copy">Salin Kode HTML</button>
+</div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+<style>
+  #social-tool-container { 
+    background: #000; 
+    border: 1px solid #333; 
+    padding: 25px; 
+    border-radius: 12px; 
+    font-family: 'Segoe UI', sans-serif; 
+    color: #fff;
+    max-width: 650px;
+    margin: auto;
+    box-shadow: 0 10px 30px rgba(255, 0, 0, 0.05);
+  }
+  
+  h3 { color: #ff0000; margin-top: 0; margin-bottom: 5px; letter-spacing: 1px; }
+  h4 { color: #ccc; margin-bottom: 10px; }
+  p { color: #888; font-size: 14px; }
+
+  .input-row { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+  
+  #iconSelect, #socialLink { 
+    padding: 12px; 
+    border: 1px solid #333; 
+    border-radius: 6px; 
+    background: #111; 
+    color: #fff;
+    outline: none;
+  }
+  
+  #socialLink { flex: 1; min-width: 200px; }
+  #socialLink:focus { border-color: #ff0000; }
+  
+  .preview-box { 
+    background: #050505; 
+    padding: 15px; 
+    border: 1px dashed #444; 
+    margin-bottom: 20px; 
+    display: flex; 
+    gap: 12px; 
+    flex-wrap: wrap; 
+    min-height: 45px; 
+    border-radius: 8px;
+    align-items: center;
+  }
+  
+  .social-icon-item { 
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 38px; height: 38px; background: #ff0000; color: #fff !important; 
+    border-radius: 50%; text-decoration: none; transition: 0.3s;
+    font-size: 18px;
+  }
+  .social-icon-item:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(255, 0, 0, 0.4); }
+
+  #outputCode { 
+    width: 100%; 
+    background: #0a0a0a; 
+    color: #00ff41; 
+    padding: 12px; 
+    font-family: 'Courier New', monospace; 
+    border-radius: 6px; 
+    border: 1px solid #333; 
+    box-sizing: border-box; 
+    font-size: 13px;
+    resize: none;
+  }
+
+  button { 
+    padding: 12px 20px; 
+    cursor: pointer; 
+    border-radius: 6px; 
+    border: none; 
+    font-weight: bold; 
+    transition: 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  
+  .btn-main { background: #d90429; color: white; }
+  .btn-main:hover { background: #ff0000; }
+  
+  .btn-copy { 
+    background: transparent; 
+    color: #ff0000; 
+    border: 1px solid #ff0000; 
+    margin-top: 15px; 
+    width: 100%; 
+  }
+  .btn-copy:hover { background: #ff0000; color: #fff; }
+</style>
+
+<script>
+  let iconList = [];
+
+  function addIcon() {
+    const iconClass = document.getElementById('iconSelect').value;
+    let inputVal = document.getElementById('socialLink').value.trim();
+
+    if (!inputVal) { alert('Masukkan username atau ID!'); return; }
+
+    let finalUrl = "";
+    
+    // Logika pembuatan URL berdasarkan pilihan sosmed
+    switch(iconClass) {
+      case 'fa-facebook-f':
+        finalUrl = `https://www.facebook.com/${inputVal}`;
+        break;
+      case 'fa-twitter':
+        finalUrl = `https://twitter.com/${inputVal}`;
+        break;
+      case 'fa-instagram':
+        finalUrl = `https://www.instagram.com/${inputVal}`;
+        break;
+      case 'fa-youtube':
+        // Menambahkan @ jika belum ada untuk handle YouTube modern
+        let ytUser = inputVal.startsWith('@') ? inputVal : '@' + inputVal;
+        finalUrl = `https://www.youtube.com/${ytUser}`;
+        break;
+      case 'fa-whatsapp':
+        // Menghapus karakter non-angka untuk WhatsApp
+        let phone = inputVal.replace(/\D/g, '');
+        finalUrl = `https://wa.me/${phone}`;
+        break;
+      case 'fa-tiktok':
+        // Menambahkan @ di depan username sesuai permintaan
+        let tiktokUser = inputVal.startsWith('@') ? inputVal : '@' + inputVal;
+        finalUrl = `https://www.tiktok.com/${tiktokUser}`;
+        break;
+    }
+
+    const item = { class: iconClass, url: finalUrl };
+    iconList.push(item);
+    updateDisplay();
+    document.getElementById('socialLink').value = '';
+  }
+
+  function updateDisplay() {
+    const previewArea = document.getElementById('previewArea');
+    const outputCode = document.getElementById('outputCode');
+    
+    let htmlPreview = '';
+    let htmlCode = '\n<!-- Social Media Icons By JIAARA -->\n<div class="social-icons-wrapper">\n';
+
+    iconList.forEach((item) => {
+      let snippet = `  <a class="social-icon-item" href="${item.url}" target="_blank" rel="noopener noreferrer"><i class="fa-brands ${item.class}"></i></a>`;
+      htmlPreview += snippet;
+      htmlCode += snippet + '\n';
+    });
+
+    htmlCode += '</div>\n\n<style>\n.social-icons-wrapper { display: flex; gap: 10px; }\n.social-icon-item { width: 35px; height: 35px; background: #ff0000; color: #fff !important; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: 0.3s; }\n.social-icon-item:hover { transform: translateY(-3px); opacity: 0.9; }\n</style>\n';
+
+    previewArea.innerHTML = htmlPreview;
+    outputCode.value = iconList.length > 0 ? htmlCode : '';
+  }
+
+  function copyCode() {
+    const copyText = document.getElementById("outputCode");
+    if (!copyText.value) return;
+    copyText.select();
+    document.execCommand("copy");
+    
+    const btn = document.querySelector('.btn-copy');
+    const originalText = btn.innerText;
+    btn.innerText = "KODE TERSALIN!";
+    setTimeout(() => btn.innerText = originalText, 2000);
+  }
+</script>
+
+
+
+
+<p style="text-align: center;"><b>ADA KRITIK, SARAN DAN REQUEST APLIKASI?</b></p><p style="text-align: center;"><i>SILAHKAN KOMEN DI KOLOM KOMENTAR DI BAWAH INI</i></p>
