@@ -1,0 +1,514 @@
+<!-- Library JSZip untuk fitur Download Semua (ZIP) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+<style>
+  /* JIAARA APP CSS SCOPE */
+  #jiapp-cert-container {
+    background-color: #000000;
+    color: #ffffff;
+    padding: 25px;
+    border-radius: 10px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    box-sizing: border-box;
+    max-width: 800px;
+    margin: 0 auto;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+  }
+
+  .jiapp-cert-header-title {
+    color: #ff0000;
+    text-align: center;
+    font-size: 28px;
+    margin: 0 0 5px 0;
+    font-weight: bold;
+  }
+
+  .jiapp-cert-header-subtitle {
+    color: #ff0000;
+    text-align: center;
+    font-size: 14px;
+    margin: 0 0 20px 0;
+  }
+
+  .jiapp-cert-form-group {
+    margin-bottom: 15px;
+  }
+
+  .jiapp-cert-label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: #cccccc;
+  }
+
+  .jiapp-cert-input {
+    width: 100%;
+    padding: 8px;
+    background: #222222;
+    border: 1px solid #444444;
+    color: #ffffff;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+
+  .jiapp-cert-row {
+    display: flex;
+    gap: 15px;
+  }
+
+  .jiapp-cert-col {
+    flex: 1;
+  }
+
+  /* Preview Area */
+  #jiapp-cert-preview-box {
+    position: relative;
+    width: 100%;
+    min-height: 200px;
+    background: #111111;
+    border: 2px dashed #444444;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  #jiapp-cert-preview-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    pointer-events: none;
+  }
+
+  .jiapp-cert-draggable-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 2px solid #ff0000;
+    background: rgba(0, 0, 0, 0.5);
+    color: #ffffff;
+    padding: 5px 10px;
+    cursor: grab;
+    font-weight: bold;
+    display: none;
+  }
+
+  .jiapp-cert-draggable-text:active {
+    cursor: grabbing;
+  }
+
+  /* Buttons */
+  .jiapp-cert-btn-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  .jiapp-cert-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    flex: 1;
+    text-align: center;
+    font-size: 16px;
+  }
+
+  #jiapp-cert-btn-gen { background-color: #ff0000; color: #ffffff; }
+  #jiapp-cert-btn-gen:hover { background-color: #cc0000; }
+
+  #jiapp-cert-btn-res { background-color: #808080; color: #ffffff; }
+  #jiapp-cert-btn-res:hover { background-color: #666666; }
+
+  .jiapp-cert-btn-dl { background-color: #008000; color: #ffffff; text-decoration: none; display: inline-block;}
+  .jiapp-cert-btn-dl:hover { background-color: #006600; }
+
+  #jiapp-cert-dl-all-wrap {
+    margin-top: 20px;
+    display: none; /* Disembunyikan sampai hasil generate selesai */
+  }
+  
+  #jiapp-cert-btn-dl-all {
+    width: 100%;
+    background-color: #008000;
+    color: #ffffff;
+  }
+  #jiapp-cert-btn-dl-all:hover { background-color: #006600; }
+
+  /* Output Area */
+  #jiapp-cert-result-area {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .jiapp-cert-result-item {
+    background: #1a1a1a;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #333;
+    text-align: center;
+  }
+
+  .jiapp-cert-result-item img {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 10px;
+    border: 1px solid #444;
+  }
+</style>
+
+<div id="jiapp-cert-container">
+  <h2 class="jiapp-cert-header-title">Certificate Generator CSV</h2>
+  <p class="jiapp-cert-header-subtitle">Aplikasi oleh JIAARA</p>
+
+  <div class="jiapp-cert-form-group">
+    <label class="jiapp-cert-label">Upload Desain Sertifikat (JPG/PNG)</label>
+    <input type="file" id="jiapp-cert-input-img" class="jiapp-cert-input" accept="image/png, image/jpeg">
+  </div>
+
+  <div class="jiapp-cert-form-group">
+    <label class="jiapp-cert-label">Upload Data CSV (Maksimal 2 Kolom)</label>
+    <input type="file" id="jiapp-cert-input-csv" class="jiapp-cert-input" accept=".csv">
+  </div>
+
+  <div class="jiapp-cert-row">
+    <div class="jiapp-cert-col">
+      <label class="jiapp-cert-label">Nama Kolom CSV ke-1</label>
+      <input type="text" id="jiapp-cert-col-1" class="jiapp-cert-input" placeholder="Misal: Nama">
+    </div>
+    <div class="jiapp-cert-col">
+      <label class="jiapp-cert-label">Nama Kolom CSV ke-2 (Opsional)</label>
+      <input type="text" id="jiapp-cert-col-2" class="jiapp-cert-input" placeholder="Misal: Posisi">
+    </div>
+  </div>
+
+  <div class="jiapp-cert-form-group" style="margin-top: 15px;">
+    <label class="jiapp-cert-label">Ukuran Font pada Sertifikat (px)</label>
+    <input type="number" id="jiapp-cert-font-size" class="jiapp-cert-input" value="60">
+  </div>
+
+  <p class="jiapp-cert-label" style="margin-top: 20px; color:#ffaaaa;">* Geser kotak merah pada gambar di bawah untuk mengatur posisi teks.</p>
+  
+  <div id="jiapp-cert-preview-box">
+    <img id="jiapp-cert-preview-img" src="" alt="">
+    <div id="jiapp-cert-drag-1" class="jiapp-cert-draggable-text">[ Kolom 1 ]</div>
+    <div id="jiapp-cert-drag-2" class="jiapp-cert-draggable-text">[ Kolom 2 ]</div>
+  </div>
+
+  <div class="jiapp-cert-btn-group">
+    <button id="jiapp-cert-btn-gen" class="jiapp-cert-btn">Generate</button>
+    <button id="jiapp-cert-btn-res" class="jiapp-cert-btn">Reset</button>
+  </div>
+
+  <!-- Area Tombol Download Semua -->
+  <div id="jiapp-cert-dl-all-wrap">
+    <button id="jiapp-cert-btn-dl-all" class="jiapp-cert-btn">Download Semua (ZIP)</button>
+  </div>
+
+  <div id="jiapp-cert-result-area"></div>
+</div>
+
+<script>
+  (function() {
+    // JIAARA APP JS SCOPE - Prefix 'jiapp_'
+    const jiapp_imgInput = document.getElementById('jiapp-cert-input-img');
+    const jiapp_csvInput = document.getElementById('jiapp-cert-input-csv');
+    const jiapp_col1Input = document.getElementById('jiapp-cert-col-1');
+    const jiapp_col2Input = document.getElementById('jiapp-cert-col-2');
+    const jiapp_fontSizeInput = document.getElementById('jiapp-cert-font-size');
+    const jiapp_previewImg = document.getElementById('jiapp-cert-preview-img');
+    const jiapp_previewBox = document.getElementById('jiapp-cert-preview-box');
+    const jiapp_drag1 = document.getElementById('jiapp-cert-drag-1');
+    const jiapp_drag2 = document.getElementById('jiapp-cert-drag-2');
+    const jiapp_btnGen = document.getElementById('jiapp-cert-btn-gen');
+    const jiapp_btnRes = document.getElementById('jiapp-cert-btn-res');
+    const jiapp_btnDlAll = document.getElementById('jiapp-cert-btn-dl-all');
+    const jiapp_dlAllWrap = document.getElementById('jiapp-cert-dl-all-wrap');
+    const jiapp_resultArea = document.getElementById('jiapp-cert-result-area');
+
+    let jiapp_uploadedImgSrc = null;
+    let jiapp_csvData = [];
+    let jiapp_csvHeaders = [];
+    let jiapp_generatedImages = []; // Array penyimpan data gambar untuk ZIP
+
+    // Image Upload
+    jiapp_imgInput.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          jiapp_uploadedImgSrc = event.target.result;
+          jiapp_previewImg.src = jiapp_uploadedImgSrc;
+          jiapp_drag1.style.display = 'block';
+          if(jiapp_col2Input.value.trim() !== '') {
+            jiapp_drag2.style.display = 'block';
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // Toggle drag 2 based on input
+    jiapp_col2Input.addEventListener('input', function() {
+      if(this.value.trim() !== '' && jiapp_uploadedImgSrc) {
+        jiapp_drag2.style.display = 'block';
+      } else {
+        jiapp_drag2.style.display = 'none';
+      }
+    });
+
+    // CSV Upload
+    jiapp_csvInput.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          const text = event.target.result;
+          jiapp_parseCSV(text);
+        };
+        reader.readAsText(file);
+      }
+    });
+
+    function jiapp_parseCSV(text) {
+      const lines = text.split('\n');
+      if(lines.length > 0) {
+        jiapp_csvHeaders = lines[0].split(',').map(h => h.trim().replace(/['"]/g, ''));
+        jiapp_csvData = [];
+        for(let i = 1; i < lines.length; i++) {
+          if(lines[i].trim() === '') continue;
+          const row = lines[i].split(',').map(c => c.trim().replace(/['"]/g, ''));
+          jiapp_csvData.push(row);
+        }
+      }
+    }
+
+    // Dragging Logic
+    function jiapp_makeDraggable(element) {
+      let isDragging = false;
+      let startX, startY, initialLeft, initialTop;
+
+      element.addEventListener('mousedown', dragStart);
+      element.addEventListener('touchstart', dragStart, {passive: false});
+
+      function dragStart(e) {
+        e.preventDefault();
+        isDragging = true;
+        if(e.type === 'touchstart') {
+          startX = e.touches[0].clientX;
+          startY = e.touches[0].clientY;
+        } else {
+          startX = e.clientX;
+          startY = e.clientY;
+        }
+        
+        element.style.transform = 'translate(0, 0)';
+        initialLeft = element.offsetLeft - (element.offsetWidth / 2);
+        initialTop = element.offsetTop - (element.offsetHeight / 2);
+        
+        element.style.left = initialLeft + 'px';
+        element.style.top = initialTop + 'px';
+
+        document.addEventListener('mousemove', drag);
+        document.addEventListener('touchmove', drag, {passive: false});
+        document.addEventListener('mouseup', dragEnd);
+        document.addEventListener('touchend', dragEnd);
+      }
+
+      function drag(e) {
+        if (!isDragging) return;
+        e.preventDefault();
+        let currentX, currentY;
+        if(e.type === 'touchmove') {
+          currentX = e.touches[0].clientX;
+          currentY = e.touches[0].clientY;
+        } else {
+          currentX = e.clientX;
+          currentY = e.clientY;
+        }
+
+        const dx = currentX - startX;
+        const dy = currentY - startY;
+
+        let newLeft = initialLeft + dx;
+        let newTop = initialTop + dy;
+
+        if (newLeft < 0) newLeft = 0;
+        if (newTop < 0) newTop = 0;
+        if (newLeft + element.offsetWidth > jiapp_previewBox.offsetWidth) newLeft = jiapp_previewBox.offsetWidth - element.offsetWidth;
+        if (newTop + element.offsetHeight > jiapp_previewBox.offsetHeight) newTop = jiapp_previewBox.offsetHeight - element.offsetHeight;
+
+        element.style.left = newLeft + 'px';
+        element.style.top = newTop + 'px';
+      }
+
+      function dragEnd() {
+        isDragging = false;
+        document.removeEventListener('mousemove', drag);
+        document.removeEventListener('touchmove', drag);
+        document.removeEventListener('mouseup', dragEnd);
+        document.removeEventListener('touchend', dragEnd);
+      }
+    }
+
+    jiapp_makeDraggable(jiapp_drag1);
+    jiapp_makeDraggable(jiapp_drag2);
+
+    function jiapp_getPosPercent(element) {
+      const boxRect = jiapp_previewBox.getBoundingClientRect();
+      const elRect = element.getBoundingClientRect();
+      const centerX = (elRect.left - boxRect.left) + (elRect.width / 2);
+      const centerY = (elRect.top - boxRect.top) + (elRect.height / 2);
+      return { x: centerX / boxRect.width, y: centerY / boxRect.height };
+    }
+
+    // Generate Logic
+    jiapp_btnGen.addEventListener('click', function() {
+      if(!jiapp_uploadedImgSrc) { alert("Silakan upload desain sertifikat terlebih dahulu."); return; }
+      if(jiapp_csvData.length === 0) { alert("Silakan upload file CSV yang valid."); return; }
+
+      const col1Name = jiapp_col1Input.value.trim();
+      const col2Name = jiapp_col2Input.value.trim();
+
+      if(!col1Name) { alert("Nama Kolom 1 wajib diisi sesuai header CSV."); return; }
+
+      const col1Index = jiapp_csvHeaders.indexOf(col1Name);
+      const col2Index = col2Name ? jiapp_csvHeaders.indexOf(col2Name) : -1;
+
+      if(col1Index === -1) { alert("Nama Kolom 1 ("+col1Name+") tidak ditemukan di file CSV."); return; }
+
+      const pos1 = jiapp_getPosPercent(jiapp_drag1);
+      const pos2 = jiapp_drag2.style.display !== 'none' ? jiapp_getPosPercent(jiapp_drag2) : null;
+      const fontSize = parseInt(jiapp_fontSizeInput.value) || 60;
+
+      jiapp_resultArea.innerHTML = '<p style="color:yellow; text-align:center;">Memproses...</p>';
+      jiapp_dlAllWrap.style.display = 'none';
+      jiapp_generatedImages = []; // reset array ZIP
+
+      const imgObj = new Image();
+      imgObj.onload = function() {
+        jiapp_resultArea.innerHTML = ''; 
+
+        jiapp_csvData.forEach((row, index) => {
+          const canvas = document.createElement('canvas');
+          canvas.width = imgObj.width;
+          canvas.height = imgObj.height;
+          const ctx = canvas.getContext('2d');
+
+          ctx.drawImage(imgObj, 0, 0, canvas.width, canvas.height);
+          ctx.font = `bold ${fontSize}px "Segoe UI", sans-serif`;
+          ctx.fillStyle = '#000000';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+
+          const text1 = row[col1Index];
+          if(text1) { ctx.fillText(text1, canvas.width * pos1.x, canvas.height * pos1.y); }
+
+          if(col2Index !== -1 && pos2) {
+            const text2 = row[col2Index];
+            if(text2) { ctx.fillText(text2, canvas.width * pos2.x, canvas.height * pos2.y); }
+          }
+
+          const dataURL = canvas.toDataURL('image/jpeg', 0.9);
+          const fileName = `Sertifikat_${text1 ? text1.replace(/[^a-zA-Z0-9]/g, '_') : 'Kosong_'+index}.jpg`;
+          
+          // Simpan data base64 untuk ZIP nanti (hapus header mime type-nya)
+          jiapp_generatedImages.push({
+            name: fileName,
+            data: dataURL.split(',')[1]
+          });
+          
+          const resultItem = document.createElement('div');
+          resultItem.className = 'jiapp-cert-result-item';
+
+          const resImg = document.createElement('img');
+          resImg.src = dataURL;
+
+          const downloadBtn = document.createElement('a');
+          downloadBtn.href = dataURL;
+          downloadBtn.download = fileName;
+          downloadBtn.className = 'jiapp-cert-btn jiapp-cert-btn-dl';
+          downloadBtn.textContent = 'Download 1 Ini';
+
+          resultItem.appendChild(resImg);
+          resultItem.appendChild(downloadBtn);
+          jiapp_resultArea.appendChild(resultItem);
+        });
+
+        // Munculkan tombol Download Semua jika ada data
+        if(jiapp_generatedImages.length > 0) {
+          jiapp_dlAllWrap.style.display = 'block';
+        }
+      };
+      imgObj.src = jiapp_uploadedImgSrc;
+    });
+
+    // ZIP Download Logic
+    jiapp_btnDlAll.addEventListener('click', function() {
+      if (typeof JSZip === 'undefined') {
+        alert("Sistem ZIP sedang memuat atau terblokir browser. Mohon muat ulang halaman.");
+        return;
+      }
+
+      // Ubah teks tombol loading
+      jiapp_btnDlAll.textContent = "Mengompres ke ZIP... Mohon Tunggu";
+      jiapp_btnDlAll.style.backgroundColor = "#555555";
+      jiapp_btnDlAll.disabled = true;
+
+      const zip = new JSZip();
+      
+      // Masukkan gambar ke dalam objek ZIP
+      jiapp_generatedImages.forEach(img => {
+        zip.file(img.name, img.data, {base64: true});
+      });
+
+      // Generate ZIP dan download otomatis
+      zip.generateAsync({type: "blob"}).then(function(content) {
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(content);
+        link.download = "Kumpulan_Sertifikat_JIAARA.zip";
+        link.style.display = "none";
+        document.body.appendChild(link); // Dibutuhkan di beberapa browser (firefox)
+        link.click();
+        document.body.removeChild(link);
+
+        // Kembalikan tombol ke semula
+        jiapp_btnDlAll.textContent = "Download Semua (ZIP)";
+        jiapp_btnDlAll.style.backgroundColor = "#008000";
+        jiapp_btnDlAll.disabled = false;
+      });
+    });
+
+    // Reset Logic
+    jiapp_btnRes.addEventListener('click', function() {
+      jiapp_imgInput.value = '';
+      jiapp_csvInput.value = '';
+      jiapp_col1Input.value = '';
+      jiapp_col2Input.value = '';
+      jiapp_fontSizeInput.value = '60';
+      jiapp_previewImg.src = '';
+      jiapp_drag1.style.display = 'none';
+      jiapp_drag2.style.display = 'none';
+      jiapp_resultArea.innerHTML = '';
+      jiapp_dlAllWrap.style.display = 'none';
+      
+      jiapp_uploadedImgSrc = null;
+      jiapp_csvData = [];
+      jiapp_csvHeaders = [];
+      jiapp_generatedImages = [];
+      
+      jiapp_drag1.style.left = '50%';
+      jiapp_drag1.style.top = '50%';
+      jiapp_drag1.style.transform = 'translate(-50%, -50%)';
+      jiapp_drag2.style.left = '50%';
+      jiapp_drag2.style.top = '60%';
+      jiapp_drag2.style.transform = 'translate(-50%, -50%)';
+    });
+
+  })();
+</script>
+
