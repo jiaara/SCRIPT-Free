@@ -1,0 +1,187 @@
+<div id="anti-copy-tool">
+  <h2 style="text-align: center; color: #ff0000; margin-bottom: 30px; letter-spacing: 1px;">Generator Kode Anti COPYPASTE</h2>
+
+  <div class="option-grid">
+    <div class="option-item">
+      <label class="switch">
+        <input type="checkbox" id="antiKlikKanan" checked>
+        <span class="slider"></span>
+      </label>
+      <span class="label-text">Anti Klik Kanan</span>
+    </div>
+
+    <div class="option-item">
+      <label class="switch">
+        <input type="checkbox" id="antiCtrlC" checked>
+        <span class="slider"></span>
+      </label>
+      <span class="label-text">Anti CTRL+C</span>
+    </div>
+  </div>
+
+  <div class="input-section">
+    <label>Pesan peringatan jika JavaScript dimatikan</label>
+    <textarea id="jsWarning" rows="3">Akses Ditolak! JavaScript harus diaktifkan untuk melihat konten.</textarea>
+  </div>
+
+  <button class="btn-generate" onclick="generateAntiCopy()"><i>&lt;&gt;</i> BUAT KODE PROTEKSI</button>
+
+  <div id="result-section" style="display:none; margin-top: 25px;">
+    <h4 style="color: #ff4d4d; margin-bottom: 10px;">KODE SIAP DI GUNAKAN:</h4>
+    <div class="code-box">
+      <textarea id="finalCode" readonly></textarea>
+      <button class="btn-copy" onclick="copyResult()">Salin</button>
+    </div>
+  </div>
+
+  <div class="spoiler-container">
+    <div class="spoiler-header" onclick="toggleSpoiler()">
+      <span>❓ Cara Pemasangan Kode <small id="status-spoiler">(buka)</small></span>
+    </div>
+    <div id="spoiler-content" class="spoiler-body">
+      <ol>
+        <li>Salin kode anti COPYPASTE di atas.</li>
+        <li>Masuk ke menu <b>"Tata Letak"</b> > klik <b>"Tambahkan Gadget"</b> di sidebar/footer.</li>
+        <li>Pilih widget <b>"HTML/JavaScript"</b>.</li>
+        <li>Tempelkan kodenya di bagian <b>"Konten"</b> pada widget tersebut.</li>
+        <li>Klik Simpan.</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<style>
+  #anti-copy-tool { 
+    background: #000000; 
+    padding: 25px; 
+    border-radius: 12px; 
+    font-family: 'Segoe UI', sans-serif; 
+    color: #e2e8f0; 
+    max-width: 600px; 
+    margin: auto; 
+    border: 1px solid #333;
+    box-shadow: 0 10px 30px rgba(255, 0, 0, 0.05);
+  }
+  .option-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
+  .option-item { display: flex; align-items: center; gap: 10px; }
+  .label-text { font-size: 14px; font-weight: 600; color: #ccc; }
+  
+  /* Switch Toggle Styling */
+  .switch { position: relative; display: inline-block; width: 45px; height: 22px; }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #333; transition: .4s; border-radius: 34px; border: 1px solid #444; }
+  .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+  input:checked + .slider { background-color: #ff0000; border-color: #ff0000; }
+  input:checked + .slider:before { transform: translateX(23px); }
+
+  /* Form Styling */
+  .input-section label { display: block; margin-bottom: 8px; font-weight: bold; font-size: 14px; color: #888; }
+  #jsWarning { width: 100%; background: #0a0a0a; border: 1px solid #333; border-radius: 8px; color: #fff; padding: 10px; box-sizing: border-box; resize: none; outline: none; }
+  #jsWarning:focus { border-color: #ff0000; }
+  
+  .btn-generate { 
+    width: 100%; 
+    margin-top: 20px; 
+    padding: 14px; 
+    background: #d90429; 
+    color: white; 
+    border: none; 
+    border-radius: 8px; 
+    font-weight: bold; 
+    cursor: pointer; 
+    transition: 0.3s; 
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .btn-generate:hover { background: #ff0000; box-shadow: 0 0 15px rgba(255, 0, 0, 0.4); }
+
+  /* Output Box */
+  .code-box { position: relative; background: #050505; border-radius: 8px; padding: 15px; border: 1px solid #333; }
+  #finalCode { 
+    width: 100%; 
+    height: 150px; 
+    background: transparent; 
+    border: none; 
+    color: #00ff41; /* Warna hijau matrix untuk kode agar mudah dibaca */
+    font-family: 'Courier New', monospace; 
+    font-size: 12px; 
+    outline: none; 
+    resize: none; 
+  }
+  .btn-copy { position: absolute; bottom: 10px; right: 10px; background: #444; color: white; border: none; padding: 6px 15px; border-radius: 4px; cursor: pointer; font-size: 12px; transition: 0.2s; }
+  .btn-copy:hover { background: #ff0000; }
+
+  /* Spoiler Styling */
+  .spoiler-container { margin-top: 25px; border: 1px solid #222; border-radius: 8px; overflow: hidden; }
+  .spoiler-header { background: #111; padding: 12px; cursor: pointer; font-weight: bold; display: flex; justify-content: space-between; align-items: center; color: #ff4d4d; }
+  .spoiler-body { display: none; padding: 15px; background: #000; font-size: 14px; border-top: 1px solid #222; line-height: 1.6; }
+  .spoiler-body li { margin-bottom: 8px; }
+  .spoiler-body b { color: #fff; }
+</style>
+
+<script>
+  function generateAntiCopy() {
+    const antiKlikKanan = document.getElementById('antiKlikKanan').checked;
+    const antiCtrlC = document.getElementById('antiCtrlC').checked;
+    const warningText = document.getElementById('jsWarning').value;
+    
+    let scriptContent = '\n<noscript><div style="position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:9999;text-align:center;padding-top:20%;font-size:24px;color:#ff0000;">' + warningText + '</div></noscript>\n';
+    scriptContent += '<script>\n';
+    
+    if (antiKlikKanan) {
+      scriptContent += 'document.addEventListener("contextmenu", e => e.preventDefault());\n';
+    }
+    
+    if (antiCtrlC) {
+      scriptContent += 'document.addEventListener("keydown", e => {\n  if (e.ctrlKey && (e.key === "c" || e.key === "u" || e.key === "i" || e.key === "s" || e.key === "p")) e.preventDefault();\n});\n';
+    }
+    
+    scriptContent += '<\/script>\n';
+    
+    document.getElementById('finalCode').value = scriptContent;
+    document.getElementById('result-section').style.display = 'block';
+  }
+
+  function toggleSpoiler() {
+    const content = document.getElementById('spoiler-content');
+    const status = document.getElementById('status-spoiler');
+    if (content.style.display === "block") {
+      content.style.display = "none";
+      status.innerText = "(buka)";
+    } else {
+      content.style.display = "block";
+      status.innerText = "(tutup)";
+    }
+  }
+
+  function copyResult() {
+    const copyText = document.getElementById("finalCode");
+    copyText.select();
+    document.execCommand("copy");
+    alert("Kode proteksi berhasil disalin!");
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p style="text-align: center;"><b>ADA KRITIK, SARAN DAN REQUEST APLIKASI?</b></p><p style="text-align: center;"><i>SILAHKAN KOMEN DI KOLOM KOMENTAR DI BAWAH INI</i></p>
