@@ -1,0 +1,130 @@
+
+
+
+<div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 800px; margin: 20px auto; border: 1px solid #333; border-radius: 12px; background-color: #121212; color: #e0e0e0; box-shadow: 0 8px 24px rgba(0,0,0,0.5); overflow: hidden; display: flex; flex-wrap: wrap;">
+    
+    <div style="flex: 1; min-width: 300px; padding: 25px; border-right: 1px solid #222;">
+        <h3 style="margin-top: 0; color: #fff; border-bottom: 2px solid #d32f2f; padding-bottom: 10px; margin-bottom: 20px;">Select Options</h3>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+            <div>
+                <label style="display: block; font-size: 13px; font-weight: bold; margin-bottom: 5px; color: #bbb;">Type:</label>
+                <select id="linkType" onchange="generateLink()" style="width: 100%; padding: 10px; border: 1px solid #444; border-radius: 5px; background: #1e1e1e; color: #fff;">
+                    <option value="url">URL</option>
+                    <option value="email">Email</option>
+                </select>
+            </div>
+            <div>
+                <label style="display: block; font-size: 13px; font-weight: bold; margin-bottom: 5px; color: #bbb;">Target:</label>
+                <select id="linkTarget" onchange="generateLink()" style="width: 100%; padding: 10px; border: 1px solid #444; border-radius: 5px; background: #1e1e1e; color: #fff;">
+                    <option value="_self">_self (Same Window)</option>
+                    <option value="_blank">_blank (New Window)</option>
+                </select>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label id="labelUrl" style="display: block; font-size: 13px; font-weight: bold; margin-bottom: 5px; color: #bbb;">Url:</label>
+            <input type="text" id="linkUrl" value="https://www.google.com" oninput="generateLink()" style="width: 100%; padding: 10px; border: 1px solid #444; border-radius: 5px; background: #1e1e1e; color: #fff; box-sizing: border-box;">
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; font-size: 13px; font-weight: bold; margin-bottom: 5px; color: #bbb;">Text:</label>
+            <input type="text" id="linkText" value="Click Here" oninput="generateLink()" style="width: 100%; padding: 10px; border: 1px solid #444; border-radius: 5px; background: #1e1e1e; color: #fff; box-sizing: border-box;">
+        </div>
+
+        <div style="background: #1a1a1a; padding: 15px; border-radius: 8px; border: 1px solid #333;">
+            <p style="margin-top: 0; font-size: 13px; font-weight: bold; color: #fff;">Other Options:</p>
+            <label style="display: block; font-size: 13px; margin-bottom: 5px; color: #bbb;"><input type="checkbox" id="optNoFollow" onchange="generateLink()"> No-follow link</label>
+            <label style="display: block; font-size: 13px; color: #bbb;"><input type="checkbox" id="optDownload" onchange="generateLink()"> Download link</label>
+        </div>
+    </div>
+
+    <div style="flex: 1; min-width: 300px; padding: 25px; background-color: #181818;">
+        <h3 style="margin-top: 0; color: #fff; margin-bottom: 20px;">Preview & Output</h3>
+        
+        <p style="font-size: 14px; font-weight: bold; margin-bottom: 10px; color: #888;">Preview:</p>
+        <div id="previewBox" style="padding: 20px; border: 1px dashed #444; border-radius: 8px; background: #121212; text-align: center; margin-bottom: 20px; min-height: 40px; display: flex; align-items: center; justify-content: center;">
+            </div>
+
+        <p style="font-size: 14px; font-weight: bold; margin-bottom: 10px; color: #888;">Code:</p>
+        <div style="position: relative;">
+            <textarea id="linkCode" readonly style="width: 100%; height: 100px; padding: 15px; border: 1px solid #333; border-radius: 8px; background: #000; color: #4ec9b0; font-family: 'Courier New', monospace; font-size: 13px; box-sizing: border-box; resize: none;"></textarea>
+            
+            <button onclick="copyLinkCode()" style="display: block; width: 100%; margin-top: 15px; padding: 12px; background-color: #d32f2f; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s;">
+                COPY GENERATED CODE
+            </button>
+            <p id="copyMsg" style="text-align: center; font-size: 12px; color: #4caf50; margin-top: 8px; visibility: hidden;">Code copied to clipboard!</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    function generateLink() {
+        const type = document.getElementById('linkType').value;
+        const target = document.getElementById('linkTarget').value;
+        const urlInput = document.getElementById('linkUrl').value;
+        const text = document.getElementById('linkText').value || 'Click Here';
+        const noFollow = document.getElementById('optNoFollow').checked;
+        const isDownload = document.getElementById('optDownload').checked;
+        
+        document.getElementById('labelUrl').innerText = type === 'email' ? 'Email Address:' : 'Url:';
+        
+        let href = urlInput;
+        if (type === 'email' && urlInput && !urlInput.startsWith('mailto:')) {
+            href = 'mailto:' + urlInput;
+        }
+
+        let linkHtml = `<a href="${href}"`;
+        if (type === 'url' && target === '_blank') {
+            linkHtml += ` target="_blank"`;
+        }
+        
+        let rel = [];
+        if (noFollow) rel.push('nofollow');
+        if (target === '_blank') rel.push('noopener');
+        
+        if (rel.length > 0) {
+            linkHtml += ` rel="${rel.join(' ')}"`;
+        }
+        
+        if (isDownload) {
+            linkHtml += ` download`;
+        }
+
+        // Preview link style agar terlihat di background hitam
+        const previewLink = linkHtml + ` style="color: #ff5252; text-decoration: underline;">${text}</a>`;
+        linkHtml += `>${text}</a>`;
+
+        document.getElementById('linkCode').value = linkHtml;
+        document.getElementById('previewBox').innerHTML = previewLink;
+    }
+
+    function copyLinkCode() {
+        const copyText = document.getElementById("linkCode");
+        copyText.select();
+        copyText.setSelectionRange(0, 99999);
+        document.execCommand("copy");
+
+        const msg = document.getElementById("copyMsg");
+        msg.style.visibility = "visible";
+        setTimeout(() => { msg.style.visibility = "hidden"; }, 2000);
+    }
+
+    generateLink();
+</script>
+
+<style>
+    button:hover {
+        background-color: #ff1744 !important;
+        box-shadow: 0 4px 12px rgba(211, 47, 47, 0.4);
+    }
+    button:active {
+        transform: translateY(1px);
+    }
+    /* Style link dalam preview */
+    #previewBox a {
+        color: #ff5252;
+    }
+</style>
+
