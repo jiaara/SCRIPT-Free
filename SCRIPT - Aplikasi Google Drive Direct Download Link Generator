@@ -1,0 +1,61 @@
+<div id="gdrive-generator" style="font-family: 'Roboto', Arial, sans-serif; max-width: 800px; margin: 20px auto; padding: 30px; color: #e0e0e0; background-color: #000000; border-radius: 12px; box-shadow: 0 4px 15px rgba(255,0,0,0.1);">
+    
+    <h2 style="text-align: center; color: #ff0000; font-weight: 600; margin-bottom: 30px; text-transform: uppercase; letter-spacing: 1px;">Google Drive Direct Download Link Generator</h2>
+
+    <div style="position: relative; margin-bottom: 15px;">
+        <label for="driveInput" style="font-size: 14px; color: #b0b0b0;">Place your shareable links here (Must have "Public on the web" access settings)</label>
+        <textarea id="driveInput" rows="3" style="width: 100%; border: none; border-bottom: 2px solid #333; padding: 10px 0; font-size: 16px; outline: none; transition: border-color 0.3s; resize: vertical; margin-top: 10px; background: transparent; color: #fff;" onfocus="this.style.borderBottom='2px solid #ff0000'" onblur="this.style.borderBottom='2px solid #333'">https://drive.google.com/file/d/1asbl5xrmd4SPxp45J8DVTZTpNb23bUFo/view?usp=sharing</textarea>
+        <div style="text-align: right; font-size: 11px; margin-top: 5px; color: #666;">Max lines enabled</div>
+    </div>
+
+    <div style="text-align: right; margin-bottom: 25px;">
+        <button onclick="generateLinks()" style="background-color: #ff0000; color: white; border: none; padding: 12px 26px; font-size: 14px; font-weight: bold; border-radius: 6px; cursor: pointer; box-shadow: 0 2px 10px rgba(255,0,0,0.3); transition: transform 0.2s, background-color 0.2s;" onmouseover="this.style.backgroundColor='#cc0000'; this.style.transform='scale(1.02)'" onmouseout="this.style.backgroundColor='#ff0000'; this.style.transform='scale(1)'">
+            GET DIRECT LINK
+        </button>
+        
+        <button onclick="resetFields()" style="background-color: transparent; color: #ff4d4d; border: 1px solid #ff4d4d; padding: 11px 26px; font-size: 14px; font-weight: 500; border-radius: 6px; cursor: pointer; margin-left: 10px; transition: all 0.2s;" onmouseover="this.style.backgroundColor='rgba(255,0,0,0.1)'" onmouseout="this.style.backgroundColor='transparent'">
+            RESET
+        </button>
+    </div>
+
+    <div id="resultContainer" style="display: none; border-top: 1px solid #333; pt-20px; margin-top: 20px;">
+        <label style="font-size: 14px; font-weight: bold; display: block; margin: 15px 0 8px 0; color: #ff0000;">Direct Download Links:</label>
+        <textarea id="driveOutput" readonly style="width: 100%; height: 150px; padding: 15px; border: 1px solid #444; border-radius: 6px; background-color: #121212; color: #00ff00; font-family: 'Courier New', monospace; font-size: 13px; box-sizing: border-box; outline: none;"></textarea>
+    </div>
+
+    <script>
+        function generateLinks() {
+            const input = document.getElementById('driveInput').value;
+            const lines = input.split('\n');
+            const results = [];
+
+            lines.forEach(line => {
+                if (line.trim() !== "") {
+                    const regex = /\/d\/([a-zA-Z0-9-_]+)|id=([a-zA-Z0-9-_]+)/;
+                    const match = line.match(regex);
+                    
+                    if (match) {
+                        const fileId = match[1] || match[2];
+                        results.push(`https://drive.google.com/uc?export=download&id=${fileId}`);
+                    } else {
+                        results.push(`Invalid Link: ${line}`);
+                    }
+                }
+            });
+
+            if (results.length > 0) {
+                document.getElementById('resultContainer').style.display = 'block';
+                document.getElementById('driveOutput').value = results.join('\n');
+            } else {
+                alert("Silakan masukkan link Google Drive yang valid.");
+            }
+        }
+
+        function resetFields() {
+            document.getElementById('driveInput').value = '';
+            document.getElementById('driveOutput').value = '';
+            document.getElementById('resultContainer').style.display = 'none';
+        }
+    </script>
+</div>
+
