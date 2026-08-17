@@ -1,0 +1,240 @@
+
+
+   <!-- JIAARA App Container -->
+<div class="jiapp-main-container">
+    <div class="jiapp-card">
+        <h2 class="jiapp-title">Mbps to MB/s Converter</h2>
+        <p class="jiapp-subtitle">Aplikasi oleh JIAARA</p>
+
+        <!-- Speed Inputs -->
+        <div class="jiapp-form-group">
+            <label class="jiapp-label">Kecepatan Internet (Mbps)</label>
+            <input type="number" id="jiapp-input-mbps" class="jiapp-input" placeholder="Masukkan Mbps..." oninput="jiappConvert('mbps')">
+        </div>
+
+        <div class="jiapp-form-group">
+            <label class="jiapp-label">Kecepatan Transfer (MB/s)</label>
+            <input type="number" id="jiapp-input-mbs" class="jiapp-input" placeholder="Hasil MB/s..." oninput="jiappConvert('mbs')">
+        </div>
+
+        <hr class="jiapp-divider">
+
+        <!-- Optional File Size Input -->
+        <div class="jiapp-form-group">
+            <label class="jiapp-label">Ukuran File (Opsional)</label>
+            <div class="jiapp-flex">
+                <input type="number" id="jiapp-file-size" class="jiapp-input" placeholder="Contoh: 500" oninput="jiappCalculateTime()">
+                <select id="jiapp-file-unit" class="jiapp-select" onchange="jiappCalculateTime()">
+                    <option value="MB">MB</option>
+                    <option value="GB">GB</option>
+                    <option value="TB">TB</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Result Section -->
+        <div class="jiapp-result-box">
+            <div id="jiapp-result-text" class="jiapp-result-value">0 MB/s</div>
+            <div id="jiapp-time-info" class="jiapp-info-text">Waktu estimasi: -</div>
+        </div>
+
+        <button class="jiapp-btn" onclick="jiappReset()">Reset Form</button>
+    </div>
+</div>
+
+<style>
+    /* Scoped CSS dengan prefix jiapp- */
+    .jiapp-main-container {
+        font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        padding: 20px 10px;
+    }
+
+    .jiapp-card {
+        background-color: #000000;
+        color: #ffffff;
+        padding: 25px;
+        border-radius: 15px;
+        width: 100%;
+        max-width: 400px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        border: 1px solid #333;
+    }
+
+    .jiapp-title {
+        color: #ff0000;
+        margin: 0 0 5px 0;
+        font-size: 22px;
+        text-align: center;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+
+    .jiapp-subtitle {
+        color: #ff0000;
+        font-size: 12px;
+        margin: 0 0 20px 0;
+        text-align: center;
+        letter-spacing: 1px;
+    }
+
+    .jiapp-form-group {
+        margin-bottom: 15px;
+    }
+
+    .jiapp-label {
+        display: block;
+        font-size: 13px;
+        margin-bottom: 5px;
+        color: #ccc;
+    }
+
+    .jiapp-input {
+        width: 100%;
+        padding: 10px;
+        background-color: #1a1a1a;
+        border: 1px solid #444;
+        border-radius: 5px;
+        color: white;
+        font-size: 16px;
+        box-sizing: border-box;
+    }
+
+    .jiapp-input:focus {
+        border-color: #ff0000;
+        outline: none;
+    }
+
+    .jiapp-flex {
+        display: flex;
+        gap: 10px;
+    }
+
+    .jiapp-select {
+        background-color: #333;
+        color: white;
+        border: 1px solid #444;
+        border-radius: 5px;
+        padding: 0 10px;
+        cursor: pointer;
+    }
+
+    .jiapp-divider {
+        border: 0;
+        border-top: 1px solid #333;
+        margin: 20px 0;
+    }
+
+    .jiapp-result-box {
+        background-color: #0a0a0a;
+        padding: 15px;
+        border-radius: 8px;
+        text-align: center;
+        margin-bottom: 20px;
+        border: 1px dashed #444;
+    }
+
+    .jiapp-result-value {
+        color: #007bff; /* Biru */
+        font-size: 28px;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .jiapp-info-text {
+        font-size: 13px;
+        color: #aaa;
+        line-height: 1.5;
+    }
+
+    .jiapp-btn {
+        width: 100%;
+        background-color: #ff0000;
+        color: white;
+        border: none;
+        padding: 12px;
+        border-radius: 5px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+
+    .jiapp-btn:hover {
+        background-color: #cc0000;
+    }
+</style>
+
+<script>
+    function jiappConvert(jiappSource) {
+        const jiappMbpsInput = document.getElementById('jiapp-input-mbps');
+        const jiappMbsInput = document.getElementById('jiapp-input-mbs');
+        const jiappDisplay = document.getElementById('jiapp-result-text');
+
+        if (jiappSource === 'mbps') {
+            const jiappVal = jiappMbpsInput.value;
+            if (jiappVal) {
+                const jiappRes = (jiappVal / 8).toFixed(2);
+                jiappMbsInput.value = jiappRes;
+                jiappDisplay.innerText = jiappRes + " MB/s";
+            } else {
+                jiappMbsInput.value = '';
+                jiappDisplay.innerText = "0 MB/s";
+            }
+        } else {
+            const jiappVal = jiappMbsInput.value;
+            if (jiappVal) {
+                const jiappRes = (jiappVal * 8).toFixed(2);
+                jiappMbpsInput.value = jiappRes;
+                jiappDisplay.innerText = jiappVal + " MB/s";
+            } else {
+                jiappMbpsInput.value = '';
+                jiappDisplay.innerText = "0 MB/s";
+            }
+        }
+        jiappCalculateTime();
+    }
+
+    function jiappCalculateTime() {
+        const jiappSpeedMbs = parseFloat(document.getElementById('jiapp-input-mbs').value);
+        const jiappFileSize = parseFloat(document.getElementById('jiapp-file-size').value);
+        const jiappUnit = document.getElementById('jiapp-file-unit').value;
+        const jiappTimeInfo = document.getElementById('jiapp-time-info');
+
+        if (!jiappSpeedMbs || !jiappFileSize) {
+            jiappTimeInfo.innerText = "Waktu estimasi: -";
+            return;
+        }
+
+        // Convert all to MB
+        let jiappSizeInMB = jiappFileSize;
+        if (jiappUnit === 'GB') jiappSizeInMB = jiappFileSize * 1024;
+        if (jiappUnit === 'TB') jiappSizeInMB = jiappFileSize * 1024 * 1024;
+
+        const jiappSeconds = jiappSizeInMB / jiappSpeedMbs;
+        jiappTimeInfo.innerText = "Estimasi waktu Upload/Download: " + jiappFormatTime(jiappSeconds);
+    }
+
+    function jiappFormatTime(jiappSecs) {
+        const jiappH = Math.floor(jiappSecs / 3600);
+        const jiappM = Math.floor((jiappSecs % 3600) / 60);
+        const jiappS = Math.floor(jiappSecs % 60);
+
+        let jiappStr = "";
+        if (jiappH > 0) jiappStr += jiappH + " jam ";
+        if (jiappM > 0) jiappStr += jiappM + " menit ";
+        jiappStr += jiappS + " detik";
+        return jiappStr;
+    }
+
+    function jiappReset() {
+        document.getElementById('jiapp-input-mbps').value = '';
+        document.getElementById('jiapp-input-mbs').value = '';
+        document.getElementById('jiapp-file-size').value = '';
+        document.getElementById('jiapp-result-text').innerText = "0 MB/s";
+        document.getElementById('jiapp-time-info').innerText = "Waktu estimasi: -";
+    }
+</script>
+
+
+<p style="text-align: center;"><b>ADA KRITIK, SARAN DAN REQUEST APLIKASI?</b></p><p style="text-align: center;"><i>SILAHKAN KOMEN DI KOLOM KOMENTAR DI BAWAH INI</i></p>
