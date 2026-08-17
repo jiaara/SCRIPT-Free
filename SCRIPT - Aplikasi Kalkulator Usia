@@ -1,0 +1,109 @@
+<div id="age-calculator" style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 500px; margin: 20px auto; padding: 25px; border: 1px solid #333; background-color: #000000; color: #ffffff; border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.5);">
+    <h4 style="margin-top: 0; color: #ff4d4d; border-bottom: 1px solid #222; padding-bottom: 10px;">Select Date of Birth:</h4>
+    
+    <div style="margin-bottom: 20px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+        <div>
+            <label style="font-size: 12px; color: #888; display: block;">Date</label>
+            <select id="dob-day" style="padding: 8px; background: #1a1a1a; color: white; border: 1px solid #444; border-radius: 4px;"></select>
+        </div>
+        <div>
+            <label style="font-size: 12px; color: #888; display: block;">Month</label>
+            <select id="dob-month" style="padding: 8px; background: #1a1a1a; color: white; border: 1px solid #444; border-radius: 4px;">
+                <option value="0">Jan</option><option value="1">Feb</option>
+                <option value="2">Mar</option><option value="3">Apr</option>
+                <option value="4">May</option><option value="5">Jun</option>
+                <option value="6">Jul</option><option value="7">Aug</option>
+                <option value="8">Sep</option><option value="9">Oct</option>
+                <option value="10">Nov</option><option value="11">Dec</option>
+            </select>
+        </div>
+        <div>
+            <label style="font-size: 12px; color: #888; display: block;">Year</label>
+            <select id="dob-year" style="padding: 8px; background: #1a1a1a; color: white; border: 1px solid #444; border-radius: 4px;"></select>
+        </div>
+    </div>
+
+    <div style="text-align: center; margin-bottom: 20px;">
+        <button onclick="calculateAge()" style="background-color: #d90429; color: white; border: none; padding: 10px 25px; cursor: pointer; font-weight: bold; border-radius: 6px; text-transform: uppercase; transition: 0.3s;">Calculate</button>
+        <button onclick="resetForm()" style="background-color: #333; color: white; border: none; padding: 10px 25px; cursor: pointer; border-radius: 6px; margin-left: 10px; transition: 0.3s;">Reset</button>
+    </div>
+
+    <div style="border-radius: 6px; padding: 10px; background: #1a1a1a; border-left: 4px solid #d90429; margin-bottom: 20px; color: #fff;" id="result-summary">Result</div>
+
+    <p style="margin-bottom: 10px; font-size: 14px; color: #aaa;">You have been living for:</p>
+
+    <div style="display: grid; grid-template-columns: 120px 1fr; gap: 8px; margin-bottom: 20px; font-size: 13px;">
+        <span style="color: #888;">In months</span><input type="text" id="res-months" readonly style="background: #000; color: #ff4d4d; border: 1px solid #333; padding: 4px 8px; border-radius: 4px;">
+        <span style="color: #888;">In days</span><input type="text" id="res-days" readonly style="background: #000; color: #ff4d4d; border: 1px solid #333; padding: 4px 8px; border-radius: 4px;">
+        <span style="color: #888;">In hours</span><input type="text" id="res-hours" readonly style="background: #000; color: #ff4d4d; border: 1px solid #333; padding: 4px 8px; border-radius: 4px;">
+        <span style="color: #888;">In minutes</span><input type="text" id="res-minutes" readonly style="background: #000; color: #ff4d4d; border: 1px solid #333; padding: 4px 8px; border-radius: 4px;">
+        <span style="color: #888;">In seconds</span><input type="text" id="res-seconds" readonly style="background: #000; color: #ff4d4d; border: 1px solid #333; padding: 4px 8px; border-radius: 4px;">
+    </div>
+
+    <p style="margin-bottom: 5px; font-size: 14px; color: #aaa;">Your next birthday will be in:</p>
+    <div style="border-radius: 6px; padding: 10px; background: #1a1a1a; color: #00ff41; font-family: monospace; border: 1px solid #333;" id="next-birthday">---</div>
+
+    <script>
+        // Populate Days and Years
+        const daySelect = document.getElementById('dob-day');
+        for (let i = 1; i <= 31; i++) {
+            let opt = document.createElement('option');
+            opt.value = i; opt.innerHTML = i;
+            daySelect.appendChild(opt);
+        }
+
+        const yearSelect = document.getElementById('dob-year');
+        const currentYear = new Date().getFullYear();
+        for (let i = currentYear; i >= 1900; i--) {
+            let opt = document.createElement('option');
+            opt.value = i; opt.innerHTML = i;
+            yearSelect.appendChild(opt);
+        }
+
+        function calculateAge() {
+            const d = parseInt(document.getElementById('dob-day').value);
+            const m = parseInt(document.getElementById('dob-month').value);
+            const y = parseInt(document.getElementById('dob-year').value);
+            
+            const dob = new Date(y, m, d);
+            const now = new Date();
+            
+            if (dob > now) {
+                alert("Tanggal lahir tidak bisa di masa depan!");
+                return;
+            }
+
+            const diffMs = now - dob;
+            const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+            const diffMonths = (now.getFullYear() - dob.getFullYear()) * 12 + (now.getMonth() - dob.getMonth());
+            
+            let ageYears = now.getFullYear() - dob.getFullYear();
+            let ageMonths = now.getMonth() - dob.getMonth();
+            if (ageMonths < 0 || (ageMonths === 0 && now.getDate() < dob.getDate())) {
+                ageYears--;
+            }
+            document.getElementById('result-summary').innerHTML = `<b>Result:</b> <span style="color:#ff4d4d">${ageYears}</span> Years old`;
+
+            document.getElementById('res-months').value = diffMonths.toLocaleString();
+            document.getElementById('res-days').value = diffDays.toLocaleString();
+            document.getElementById('res-hours').value = Math.floor(diffMs / (1000 * 60 * 60)).toLocaleString();
+            document.getElementById('res-minutes').value = Math.floor(diffMs / (1000 * 60)).toLocaleString();
+            document.getElementById('res-seconds').value = Math.floor(diffMs / 1000).toLocaleString();
+
+            let nextBday = new Date(now.getFullYear(), m, d);
+            if (nextBday < now) nextBday.setFullYear(now.getFullYear() + 1);
+            const daysToBday = Math.ceil((nextBday - now) / (1000 * 60 * 60 * 24));
+            document.getElementById('next-birthday').innerHTML = daysToBday + " days remaining";
+        }
+
+        function resetForm() {
+            document.getElementById('dob-day').value = 1;
+            document.getElementById('dob-month').value = 0;
+            document.getElementById('dob-year').value = 1926;
+            document.getElementById('result-summary').innerHTML = "Result";
+            document.querySelectorAll('#age-calculator input').forEach(input => input.value = "");
+            document.getElementById('next-birthday').innerHTML = "---";
+        }
+    </script>
+</div>
+
