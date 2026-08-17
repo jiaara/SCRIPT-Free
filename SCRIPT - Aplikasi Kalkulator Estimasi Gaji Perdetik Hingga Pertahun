@@ -1,0 +1,218 @@
+
+
+<!-- JIAARA Salary Calculator Start -->
+<style>
+    .jiapp-container {
+        background-color: #000000;
+        color: #ffffff;
+        padding: 25px;
+        border-radius: 12px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        max-width: 500px;
+        margin: 20px auto;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        border: 1px solid #333;
+    }
+
+    .jiapp-title {
+        color: #ff0000;
+        margin: 0;
+        font-size: 24px;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .jiapp-subtitle {
+        color: #ff0000;
+        font-size: 14px;
+        text-align: center;
+        margin-top: 5px;
+        margin-bottom: 25px;
+        font-style: italic;
+    }
+
+    .jiapp-form-group {
+        margin-bottom: 15px;
+    }
+
+    .jiapp-form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-size: 14px;
+    }
+
+    .jiapp-form-group label span {
+        color: #ff0000;
+    }
+
+    .jiapp-input {
+        width: 100%;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #444;
+        background-color: #222;
+        color: white;
+        box-sizing: border-box;
+        outline: none;
+    }
+
+    .jiapp-input:focus {
+        border-color: #ff0000;
+    }
+
+    .jiapp-btn {
+        width: 100%;
+        padding: 12px;
+        background-color: #ff0000;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 16px;
+        margin-top: 10px;
+        transition: background 0.3s;
+    }
+
+    .jiapp-btn:hover {
+        background-color: #cc0000;
+    }
+
+    .jiapp-result-box {
+        margin-top: 25px;
+        padding-top: 20px;
+        border-top: 1px solid #333;
+        display: none;
+    }
+
+    .jiapp-blue-text {
+        color: #00ccff;
+        font-weight: bold;
+    }
+
+    .jiapp-umk-info {
+        background: #111;
+        padding: 10px;
+        border-left: 4px solid #00ccff;
+        margin: 15px 0;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .jiapp-breakdown-title {
+        color: #ff0000;
+        font-size: 16px;
+        margin-bottom: 10px;
+        border-bottom: 1px solid #333;
+        padding-bottom: 5px;
+    }
+
+    .jiapp-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        font-size: 13px;
+    }
+
+    .jiapp-grid-item {
+        padding: 8px;
+        background: #1a1a1a;
+        border-radius: 4px;
+    }
+</style>
+
+<div class="jiapp-container">
+    <div class="jiapp-title">Kalkulator Estimasi Gaji</div>
+    <div class="jiapp-subtitle">Aplikasi oleh JIAARA</div>
+
+    <div class="jiapp-form-group">
+        <label>Jumlah Gaji per Bulan (Rp) <span>*</span></label>
+        <input type="number" id="jiapp-salary" class="jiapp-input" placeholder="Contoh: 5000000">
+    </div>
+
+    <div class="jiapp-form-group">
+        <label>Jumlah Hari Kerja per Bulan <span>*</span></label>
+        <input type="number" id="jiapp-days" class="jiapp-input" placeholder="Contoh: 22">
+    </div>
+
+    <div class="jiapp-form-group">
+        <label>Jumlah Jam Kerja per Hari <span>*</span></label>
+        <input type="number" id="jiapp-hours" class="jiapp-input" placeholder="Contoh: 8">
+    </div>
+
+    <div class="jiapp-form-group">
+        <label>Input UMK (Opsional)</label>
+        <input type="number" id="jiapp-umk" class="jiapp-input" placeholder="Masukkan UMK kota kamu">
+    </div>
+
+    <button class="jiapp-btn" onclick="jiappCalculate()">Hitung Estimasi</button>
+
+    <div id="jiapp-result-area" class="jiapp-result-box">
+        <div id="jiapp-umk-msg" class="jiapp-umk-info" style="display:none;"></div>
+
+        <div class="jiapp-breakdown-title">Rincian Estimasi Gaji</div>
+        <div class="jiapp-grid">
+            <div class="jiapp-grid-item">Per Tahun:<br><span id="jiapp-year" class="jiapp-blue-text"></span></div>
+            <div class="jiapp-grid-item">Per Minggu:<br><span id="jiapp-week" class="jiapp-blue-text"></span></div>
+            <div class="jiapp-grid-item">Per Hari:<br><span id="jiapp-day" class="jiapp-blue-text"></span></div>
+            <div class="jiapp-grid-item">Per Jam:<br><span id="jiapp-hour" class="jiapp-blue-text"></span></div>
+            <div class="jiapp-grid-item" style="grid-column: span 2;">Per Detik:<br><span id="jiapp-second" class="jiapp-blue-text"></span></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function jiappFormatRupiah(number) {
+        return new Intl.NumberFormat('id-ID', {
+            style: 'currency',
+            currency: 'IDR',
+            minimumFractionDigits: 0
+        }).format(number);
+    }
+
+    function jiappCalculate() {
+        // Ambil Value
+        const jiappSalary = parseFloat(document.getElementById('jiapp-salary').value);
+        const jiappDays = parseFloat(document.getElementById('jiapp-days').value);
+        const jiappHours = parseFloat(document.getElementById('jiapp-hours').value);
+        const jiappUmk = parseFloat(document.getElementById('jiapp-umk').value);
+
+        // Validasi
+        if (!jiappSalary || !jiappDays || !jiappHours) {
+            alert("Harap isi semua kolom bertanda bintang (*)");
+            return;
+        }
+
+        // Kalkulasi
+        const jiappYearVal = jiappSalary * 12;
+        const jiappWeekVal = jiappYearVal / 52;
+        const jiappDayVal = jiappSalary / jiappDays;
+        const jiappHourVal = jiappDayVal / jiappHours;
+        const jiappSecondVal = jiappHourVal / 3600;
+
+        // Tampilkan Area Hasil
+        document.getElementById('jiapp-result-area').style.display = 'block';
+
+        // Set Hasil Rincian
+        document.getElementById('jiapp-year').innerText = jiappFormatRupiah(jiappYearVal);
+        document.getElementById('jiapp-week').innerText = jiappFormatRupiah(jiappWeekVal);
+        document.getElementById('jiapp-day').innerText = jiappFormatRupiah(jiappDayVal);
+        document.getElementById('jiapp-hour').innerText = jiappFormatRupiah(jiappHourVal);
+        document.getElementById('jiapp-second').innerText = jiappFormatRupiah(jiappSecondVal.toFixed(2));
+
+        // Logika UMK
+        const jiappUmkMsg = document.getElementById('jiapp-umk-msg');
+        if (jiappUmk > 0) {
+            const jiappRatio = (jiappSalary / jiappUmk).toFixed(2);
+            jiappUmkMsg.style.display = 'block';
+            jiappUmkMsg.innerHTML = `Gaji kamu saat ini <span class="jiapp-blue-text">${jiappRatio}</span> kali lipat dari standar UMK yang berlaku di Kota kamu.`;
+        } else {
+            jiappUmkMsg.style.display = 'none';
+        }
+        
+        // Auto scroll ke hasil
+        document.getElementById('jiapp-result-area').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+</script>
+<!-- JIAARA Salary Calculator End -->
+
