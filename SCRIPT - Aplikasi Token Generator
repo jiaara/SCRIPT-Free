@@ -1,0 +1,107 @@
+<div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 500px; margin: 20px auto; padding: 25px; border: 1px solid #ddd; border-radius: 12px; background-color: #1a1a1a; color: #ffffff; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+    
+    <h2 style="margin-top: 0; text-align: center; color: #ff4d4d; margin-bottom: 25px;">Token Generator</h2>
+
+    <div style="position: relative; margin-bottom: 25px;">
+        <textarea id="tokenDisplay" readonly style="width: 100%; height: 80px; padding: 15px; border: 1px solid #333; border-radius: 8px; background-color: #262626; color: #00ff88; font-family: 'Courier New', monospace; font-size: 16px; resize: none; box-sizing: border-box; word-break: break-all;"></textarea>
+    </div>
+
+    <div style="margin-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+            <label style="font-size: 14px;">Token Length:</label>
+            <span id="lengthValue" style="color: #ff4d4d; font-weight: bold;">32</span>
+        </div>
+        <input type="range" id="tokenLength" min="8" max="128" value="32" oninput="updateLengthDisplay()" style="width: 100%; accent-color: #ff4d4d; cursor: pointer;">
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px;">
+        <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
+            <input type="checkbox" id="useUpper" checked style="margin-right: 10px; accent-color: #ff4d4d;"> Uppercase (ABC)
+        </label>
+        <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
+            <input type="checkbox" id="useLower" checked style="margin-right: 10px; accent-color: #ff4d4d;"> Lowercase (abc)
+        </label>
+        <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
+            <input type="checkbox" id="useNumber" checked style="margin-right: 10px; accent-color: #ff4d4d;"> Numbers (123)
+        </label>
+        <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
+            <input type="checkbox" id="useSymbol" style="margin-right: 10px; accent-color: #ff4d4d;"> Symbols (!@#)
+        </label>
+    </div>
+
+    <div style="display: flex; gap: 10px;">
+        <button onclick="generateToken()" style="flex: 2; padding: 12px; background-color: #d32f2f; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s;">
+            GENERATE TOKEN
+        </button>
+        <button id="copyBtn" onclick="copyToken()" style="flex: 1; padding: 12px; background-color: #444; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s;">
+            COPY
+        </button>
+    </div>
+</div>
+
+<script>
+    function updateLengthDisplay() {
+        document.getElementById('lengthValue').innerText = document.getElementById('tokenLength').value;
+    }
+
+    function generateToken() {
+        const length = document.getElementById('tokenLength').value;
+        const useUpper = document.getElementById('useUpper').checked;
+        const useLower = document.getElementById('useLower').checked;
+        const useNumber = document.getElementById('useNumber').checked;
+        const useSymbol = document.getElementById('useSymbol').checked;
+
+        const upperChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        const lowerChars = "abcdefghijklmnopqrstuvwxyz";
+        const numberChars = "0123456789";
+        const symbolChars = "!@#$%^&*()_+~`|}{[]:;?><,./-=";
+
+        let charPool = "";
+        if (useUpper) charPool += upperChars;
+        if (useLower) charPool += lowerChars;
+        if (useNumber) charPool += numberChars;
+        if (useSymbol) charPool += symbolChars;
+
+        if (charPool === "") {
+            alert("Please select at least one character type!");
+            return;
+        }
+
+        let token = "";
+        for (let i = 0; i < length; i++) {
+            const randomIndex = Math.floor(Math.random() * charPool.length);
+            token += charPool.charAt(randomIndex);
+        }
+
+        document.getElementById('tokenDisplay').value = token;
+    }
+
+    function copyToken() {
+        const tokenArea = document.getElementById('tokenDisplay');
+        if (!tokenArea.value) return;
+
+        tokenArea.select();
+        document.execCommand('copy');
+
+        const btn = document.getElementById('copyBtn');
+        const originalText = btn.innerText;
+        btn.innerText = "COPIED!";
+        btn.style.backgroundColor = "#2e7d32";
+
+        setTimeout(() => {
+            btn.innerText = originalText;
+            btn.style.backgroundColor = "#444";
+        }, 2000);
+    }
+
+    // Generate token otomatis saat pertama kali dimuat
+    generateToken();
+</script>
+
+<style>
+    /* Tambahan interaksi */
+    button:hover { opacity: 0.9; transform: translateY(-1px); }
+    button:active { transform: translateY(1px); }
+    input[type=range]:active { cursor: grabbing; }
+</style>
+
