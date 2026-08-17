@@ -1,0 +1,126 @@
+<div style="font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 800px; margin: 20px auto; padding: 25px; border: 1px solid #333; border-radius: 12px; background-color: #000; box-shadow: 0 10px 30px rgba(255,0,0,0.15); color: #fff;">
+    
+    <h2 style="margin-top: 0; color: #ff0000; text-align: center; border-bottom: 2px solid #222; padding-bottom: 15px; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px;">Lorem Ipsum Generator</h2>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-end; margin-bottom: 20px;">
+        <div style="flex: 1; min-width: 200px;">
+            <label style="display: block; font-size: 13px; font-weight: bold; margin-bottom: 8px; color: #888; text-transform: uppercase;">Pilih Jenis Output:</label>
+            <select id="loremType" style="width: 100%; padding: 12px; border: 1px solid #333; border-radius: 6px; background-color: #111; color: #fff; cursor: pointer; outline: none;">
+                <option value="long">Long Paragraphs</option>
+                <option value="medium">Medium Paragraphs</option>
+                <option value="short">Short Paragraphs</option>
+                <option value="list_ordered">Ordered List</option>
+                <option value="list_unordered">Unordered List</option>
+            </select>
+        </div>
+
+        <div style="width: 100px;">
+            <label style="display: block; font-size: 13px; font-weight: bold; margin-bottom: 8px; color: #888; text-transform: uppercase;">Jumlah:</label>
+            <input type="number" id="loremCount" value="3" min="1" max="50" style="width: 100%; padding: 11px; border: 1px solid #333; border-radius: 6px; box-sizing: border-box; background-color: #111; color: #fff; outline: none;">
+        </div>
+
+        <div style="flex: 1; min-width: 150px;">
+            <button onclick="generateLorem()" style="width: 100%; padding: 12px; background-color: #ff0000; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 16px; transition: all 0.3s; text-transform: uppercase;">
+                GENERATE
+            </button>
+        </div>
+    </div>
+
+    <div style="position: relative;">
+        <label style="display: block; font-size: 13px; font-weight: bold; margin-bottom: 8px; color: #888; text-transform: uppercase;">Hasil Generate:</label>
+        <div id="loremOutput" style="width: 100%; min-height: 200px; max-height: 400px; padding: 15px; border: 1px solid #222; border-radius: 6px; background-color: #0a0a0a; overflow-y: auto; line-height: 1.6; color: #bbb; font-size: 15px; box-sizing: border-box; border-left: 4px solid #ff0000;">
+            Klik tombol Generate untuk membuat teks...
+        </div>
+        
+        <button id="copyBtn" onclick="copyLorem()" style="margin-top: 15px; padding: 10px 20px; background-color: transparent; color: #ff4d4d; border: 1px solid #ff4d4d; border-radius: 4px; cursor: pointer; font-size: 13px; display: flex; align-items: center; gap: 8px; font-weight: bold; transition: all 0.2s;">
+            <span>📋</span> SALIN TEKS
+        </button>
+    </div>
+</div>
+
+<style>
+    #loremType:focus, #loremCount:focus { border-color: #ff0000 !important; }
+    button:hover { filter: brightness(1.2); transform: translateY(-1px); }
+    button:active { transform: scale(0.98); }
+    #copyBtn:hover { background-color: rgba(255, 0, 0, 0.1); }
+    /* Gaya scrollbar untuk area hasil */
+    #loremOutput::-webkit-scrollbar { width: 8px; }
+    #loremOutput::-webkit-scrollbar-track { background: #000; }
+    #loremOutput::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+    #loremOutput::-webkit-scrollbar-thumb:hover { background: #ff0000; }
+</style>
+
+<script>
+    const phrases = [
+        "lorem ipsum dolor sit amet", "consectetur adipiscing elit", "sed do eiusmod tempor incididunt", 
+        "ut labore et dolore magna aliqua", "ut enim ad minim veniam", "quis nostrud exercitation ullamco", 
+        "laboris nisi ut aliquip ex ea commodo consequat", "duis aute irure dolor in reprehenderit", 
+        "in voluptate velit esse cillum dolore eu fugiat nulla pariatur", "excepteur sint occaecat cupidatat non proident", 
+        "sunt in culpa qui officia deserunt mollit anim id est laborum", "curabitur pretium tincidunt lacus", 
+        "nulla gravida orci a odio", "nullam varius turpis et commodo pharetra", "est eros bibendum elit", 
+        "nec luctus magna felis sollicitudin mauris", "integer in mauris eu nibh euismod gravida", 
+        "duis ac tellus et risus vulputate vehicula", "donec lobortis risus a elit", "etiam tempor ut est sit amet"
+    ];
+
+    function generateLorem() {
+        const type = document.getElementById('loremType').value;
+        const count = parseInt(document.getElementById('loremCount').value) || 1;
+        const output = document.getElementById('loremOutput');
+        let result = "";
+
+        if (type.includes('list')) {
+            const listTag = type === 'list_ordered' ? 'ol' : 'ul';
+            result += `<${listTag} style="padding-left: 20px; color: #00ff41; font-family: monospace;">`;
+            for (let i = 0; i < count; i++) {
+                result += `<li style="margin-bottom: 5px;">${capitalize(phrases[Math.floor(Math.random() * phrases.length)])}.</li>`;
+            }
+            result += `</${listTag}>`;
+        } else {
+            let sentencePerPara = type === 'long' ? 8 : (type === 'medium' ? 5 : 2);
+            for (let i = 0; i < count; i++) {
+                let para = [];
+                for (let s = 0; s < sentencePerPara; s++) {
+                    para.push(capitalize(phrases[Math.floor(Math.random() * phrases.length)]));
+                }
+                result += `<p style="margin-bottom: 15px;">${para.join(". ")}.</p>`;
+            }
+        }
+
+        output.innerHTML = result;
+    }
+
+    function capitalize(str) {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    function copyLorem() {
+        const output = document.getElementById('loremOutput');
+        const btn = document.getElementById('copyBtn');
+        
+        const range = document.createRange();
+        range.selectNode(output);
+        window.getSelection().removeAllRanges();
+        window.getSelection().addRange(range);
+        
+        try {
+            document.execCommand('copy');
+            window.getSelection().removeAllRanges();
+            
+            const originalText = btn.innerHTML;
+            btn.innerHTML = "✅ TERSALIN!";
+            btn.style.color = "#00ff41";
+            btn.style.borderColor = "#00ff41";
+            
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.style.color = "#ff4d4d";
+                btn.style.borderColor = "#ff4d4d";
+            }, 2000);
+        } catch (err) {
+            alert('Gagal menyalin teks');
+        }
+    }
+</script>
+
+
+
