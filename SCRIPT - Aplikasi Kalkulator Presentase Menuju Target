@@ -1,0 +1,193 @@
+<!-- JIAARA App Container -->
+<div class="jiapp-wrapper">
+    <div class="jiapp-container-box">
+        <h2 class="jiapp-main-title">PERCENT TO GOAL</h2>
+        <p class="jiapp-subtitle">Aplikasi oleh JIAARA</p>
+
+        <div class="jiapp-input-group">
+            <label class="jiapp-label" for="jiapp-current">Pencapaian Saat Ini:</label>
+            <input type="number" id="jiapp-current" class="jiapp-input" placeholder="Masukkan angka pencapaian...">
+        </div>
+
+        <div class="jiapp-input-group">
+            <label class="jiapp-label" for="jiapp-target">Target:</label>
+            <input type="number" id="jiapp-target" class="jiapp-input" placeholder="Masukkan angka target...">
+        </div>
+
+        <button type="button" class="jiapp-btn-calc" onclick="jiappCalculateGoal()">Hitung Progres</button>
+
+        <div id="jiapp-result-area" style="display: none;">
+            <div class="jiapp-stats">
+                <span>Persentase: <strong id="jiapp-percent-text">0%</strong></span>
+            </div>
+            <div class="jiapp-progress-bg">
+                <div id="jiapp-progress-fill" class="jiapp-progress-bar"></div>
+            </div>
+            <p id="jiapp-motivation-text" class="jiapp-motivation"></p>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* CSS dengan prefix jiapp- untuk menghindari konflik */
+    .jiapp-wrapper {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        display: flex;
+        justify-content: center;
+        padding: 20px 10px;
+    }
+
+    .jiapp-container-box {
+        background-color: #000000;
+        color: #ffffff;
+        padding: 30px;
+        border-radius: 12px;
+        width: 100%;
+        max-width: 400px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        border: 1px solid #333;
+    }
+
+    .jiapp-main-title {
+        color: #ff0000;
+        margin: 0;
+        font-size: 24px;
+        text-align: center;
+        text-transform: uppercase;
+        font-weight: bold;
+    }
+
+    .jiapp-subtitle {
+        color: #ff0000;
+        font-size: 14px;
+        text-align: center;
+        margin-top: 5px;
+        margin-bottom: 25px;
+        font-weight: 500;
+    }
+
+    .jiapp-input-group {
+        margin-bottom: 15px;
+    }
+
+    .jiapp-label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 14px;
+        color: #ccc;
+    }
+
+    .jiapp-input {
+        width: 100%;
+        padding: 12px;
+        background-color: #222;
+        border: 1px solid #444;
+        border-radius: 6px;
+        color: #fff;
+        box-sizing: border-box;
+        transition: border 0.3s;
+    }
+
+    .jiapp-input:focus {
+        border-color: #ff0000;
+        outline: none;
+    }
+
+    .jiapp-btn-calc {
+        width: 100%;
+        padding: 12px;
+        background-color: #ff0000;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        font-weight: bold;
+        cursor: pointer;
+        font-size: 16px;
+        margin-top: 10px;
+        transition: background 0.3s;
+    }
+
+    .jiapp-btn-calc:hover {
+        background-color: #cc0000;
+    }
+
+    .jiapp-progress-bg {
+        background-color: #333;
+        height: 25px;
+        border-radius: 15px;
+        margin: 20px 0 10px 0;
+        overflow: hidden;
+    }
+
+    .jiapp-progress-bar {
+        background-color: #007bff; /* Biru */
+        height: 100%;
+        width: 0%;
+        transition: width 0.8s ease-in-out;
+    }
+
+    .jiapp-stats {
+        margin-top: 25px;
+        text-align: center;
+        font-size: 18px;
+    }
+
+    .jiapp-motivation {
+        text-align: center;
+        font-style: italic;
+        color: #00ffcc;
+        margin-top: 10px;
+        font-size: 14px;
+        min-height: 20px;
+    }
+</style>
+
+<script>
+    function jiappCalculateGoal() {
+        const current = parseFloat(document.getElementById('jiapp-current').value);
+        const target = parseFloat(document.getElementById('jiapp-target').value);
+        const resultArea = document.getElementById('jiapp-result-area');
+        const percentText = document.getElementById('jiapp-percent-text');
+        const progressBar = document.getElementById('jiapp-progress-fill');
+        const motivationText = document.getElementById('jiapp-motivation-text');
+
+        if (isNaN(current) || isNaN(target) || target <= 0) {
+            alert("Harap masukkan angka yang valid dan target harus lebih dari 0.");
+            return;
+        }
+
+        let percentage = (current / target) * 100;
+        let displayPercent = percentage.toFixed(1);
+
+        // Tampilkan area hasil
+        resultArea.style.display = 'block';
+        
+        // Update teks dan bar (maksimal 100% untuk visual bar)
+        percentText.innerText = displayPercent + '%';
+        let barWidth = percentage > 100 ? 100 : percentage;
+        progressBar.style.width = barWidth + '%';
+
+        // Logika Kalimat Motivasi
+        let motivation = "";
+        if (percentage >= 200) {
+            motivation = "Woa Woa, Tenang Kawan! Pencapaianmu Sudah Terlewat! 🤣";
+          } else if (percentage >= 100) {
+            motivation = "Luar biasa! Target tercapai dengan sempurna! 😍";
+        } else if (percentage >= 80) {
+            motivation = "Sudah sangat dekat! Berikan usaha terakhirmu!";
+        } else if (percentage >= 50) {
+            motivation = "Setengah perjalanan selesai! Tetap fokus!";
+        } else if (percentage >= 40) {
+            motivation = "Hampir setengah jalan, kamu luar biasa!";
+        } else if (percentage >= 20) {
+            motivation = "Mulai terlihat hasilnya, jangan berhenti!";
+        } else if (percentage >= 10) {
+            motivation = "Awal yang bagus! Teruslah melangkah.";
+        } else {
+            motivation = "Ayo mulai langkah pertamamu sekarang!";
+        }
+
+        motivationText.innerText = motivation;
+    }
+</script>
+
