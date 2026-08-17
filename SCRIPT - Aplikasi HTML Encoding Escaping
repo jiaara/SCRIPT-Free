@@ -1,0 +1,161 @@
+
+
+<div id="html-tool-container">
+  <h3>HTML Encoder & Decoder</h3>
+  <p>Masukkan kode HTML di bawah ini untuk mengubah karakter khusus menjadi entitas HTML (atau sebaliknya).</p>
+  
+  <!-- Contoh sementara ditambahkan di dalam tag textarea di bawah ini -->
+  <textarea id="input-area" placeholder="Masukkan kode di sini..."><h1>Halo Dunia!</h1>
+<div class="konten">
+  <p>Selamat datang di JIAARA TOOLS.</p>
+  <a href="https://google.com">Klik di sini & lihat hasilnya!</a>
+</div></textarea>
+  
+  <div class="button-group">
+    <button onclick="processHTML('encode')" class="btn encode-btn">Encode / Escape</button>
+    <button onclick="processHTML('decode')" class="btn decode-btn">Decode / Unescape</button>
+    <button onclick="copyToClipboard()" class="btn copy-btn">Salin Hasil</button>
+    <button onclick="clearAll()" class="btn clear-btn">Hapus Semua</button>
+  </div>
+
+  <textarea id="output-area" readonly placeholder="Hasil akan muncul di sini..."></textarea>
+  <div id="status-msg"></div>
+</div>
+
+<style>
+  #html-tool-container {
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    max-width: 100%;
+    margin: 20px auto;
+    padding: 25px;
+    background: #000000; /* Latar Belakang Hitam */
+    border-radius: 12px;
+    border: 1px solid #333;
+    box-shadow: 0 8px 24px rgba(255, 0, 0, 0.15);
+    color: #ffffff;
+  }
+
+  #html-tool-container h3 { 
+    margin-top: 0; 
+    color: #ff0000; /* Judul Merah */
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+  }
+
+  #html-tool-container p {
+    color: #b0b0b0;
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+  
+  textarea {
+    width: 100%;
+    height: 180px;
+    margin: 10px 0;
+    padding: 15px;
+    border: 1px solid #333;
+    border-radius: 8px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 14px;
+    box-sizing: border-box;
+    resize: vertical;
+    background: #121212; /* Area Input Gelap */
+    color: #e0e0e0;
+    outline: none;
+    transition: border-color 0.3s;
+  }
+
+  textarea:focus {
+    border-color: #ff0000; /* Fokus Merah */
+  }
+  
+  .button-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 15px 0;
+  }
+  
+  .btn {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 13px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+  }
+  
+  .encode-btn { background: #ff0000; color: white; } 
+  .decode-btn { background: #cc0000; color: white; } 
+  .copy-btn { background: transparent; color: #ff4d4d; border: 1px solid #ff4d4d; } 
+  .clear-btn { background: #333; color: #bbb; } 
+  
+  .btn:hover { 
+    transform: translateY(-2px);
+    filter: brightness(1.2);
+    box-shadow: 0 4px 12px rgba(255, 0, 0, 0.2);
+  }
+
+  .btn:active { transform: translateY(0); }
+  
+  #output-area { 
+    background: #0a0a0a; 
+    border-color: #444; 
+    color: #00ff41; 
+  }
+  
+  #status-msg {
+    height: 20px;
+    font-size: 13px;
+    color: #ff4d4d; 
+    margin-top: 8px;
+    font-weight: 500;
+  }
+</style>
+
+<script>
+  function processHTML(action) {
+    const input = document.getElementById('input-area').value;
+    const outputField = document.getElementById('output-area');
+    
+    if (!input.trim()) {
+      showStatus('Masukkan kode terlebih dahulu!');
+      return;
+    }
+
+    if (action === 'encode') {
+      const div = document.createElement('div');
+      div.textContent = input;
+      outputField.value = div.innerHTML;
+    } else {
+      const div = document.createElement('div');
+      div.innerHTML = input;
+      outputField.value = div.textContent;
+    }
+    showStatus(action === 'encode' ? 'Berhasil di-Encode!' : 'Berhasil di-Decode!');
+  }
+
+  function copyToClipboard() {
+    const output = document.getElementById('output-area');
+    if (!output.value) return;
+    
+    output.select();
+    document.execCommand('copy');
+    showStatus('Tersalin ke clipboard!');
+  }
+
+  function clearAll() {
+    document.getElementById('input-area').value = '';
+    document.getElementById('output-area').value = '';
+    showStatus('Dibersihkan.');
+  }
+
+  function showStatus(msg) {
+    const status = document.getElementById('status-msg');
+    status.innerText = msg;
+    setTimeout(() => { status.innerText = ''; }, 3000);
+  }
+</script>
+
