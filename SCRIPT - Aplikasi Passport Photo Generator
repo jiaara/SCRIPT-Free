@@ -1,0 +1,550 @@
+<style>
+  /* CSS JIAARA APP */
+  #jiapp-container {
+    background-color: #000000;
+    color: #ffffff;
+    font-family: Arial, sans-serif;
+    padding: 25px;
+    border-radius: 10px;
+    max-width: 500px;
+    margin: 0 auto;
+    box-sizing: border-box;
+  }
+
+  .jiapp-title {
+    color: #ff0000;
+    margin: 0 0 5px 0;
+    font-size: 24px;
+    text-align: center;
+    font-weight: bold;
+  }
+
+  .jiapp-subtitle {
+    color: #ff0000;
+    margin: 0 0 25px 0;
+    font-size: 12px;
+    text-align: center;
+    letter-spacing: 1px;
+  }
+
+  .jiapp-form-group {
+    margin-bottom: 15px;
+  }
+
+  .jiapp-label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: #dddddd;
+  }
+
+  .jiapp-select, .jiapp-input-file {
+    width: 100%;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #444;
+    background: #222;
+    color: #fff;
+    box-sizing: border-box;
+  }
+
+  .jiapp-radio-group {
+    display: flex;
+    gap: 15px;
+    margin-top: 5px;
+  }
+
+  .jiapp-radio-label {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  .jiapp-radio-label input {
+    margin-right: 5px;
+  }
+
+  /* Preview Area */
+  .jiapp-preview-wrapper {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+    overflow: hidden;
+  }
+
+  #jiapp-preview-box {
+    position: relative;
+    width: 200px; 
+    height: 300px; 
+    background-color: #db1514; 
+    overflow: hidden;
+    border: 1px solid #333;
+    touch-action: none; 
+  }
+
+  /* Bounding Box / Transform Box */
+  #jiapp-transform-box {
+    position: absolute;
+    display: none;
+    border: 1px dashed #ffffff;
+    cursor: move;
+    box-sizing: border-box;
+  }
+
+  #jiapp-preview-image {
+    width: 100%;
+    height: 100%;
+    display: block;
+    pointer-events: none; /* Supaya klik tembus ke transform-box */
+  }
+
+  /* Resize Handles (Titik Sudut) */
+  .jiapp-handle {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background-color: #0090ff;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    z-index: 10;
+  }
+
+  .jiapp-handle.tl { top: -6px; left: -6px; cursor: nwse-resize; }
+  .jiapp-handle.tr { top: -6px; right: -6px; cursor: nesw-resize; }
+  .jiapp-handle.bl { bottom: -6px; left: -6px; cursor: nesw-resize; }
+  .jiapp-handle.br { bottom: -6px; right: -6px; cursor: nwse-resize; }
+
+  .jiapp-border-preview {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    border: 8px solid #ffffff; 
+    pointer-events: none;
+    display: none;
+    z-index: 20;
+  }
+
+  /* Text Petunjuk */
+  #jiapp-guide-text {
+    font-size: 11px; 
+    color:#aaa; 
+    text-align:center; 
+    display:none;
+    margin-bottom: 10px;
+  }
+
+  /* Buttons */
+  .jiapp-btn-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  .jiapp-btn {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    text-align: center;
+    transition: opacity 0.2s;
+  }
+
+  .jiapp-btn:hover {
+    opacity: 0.8;
+  }
+
+  .jiapp-btn-download {
+    background-color: #28a745; 
+    color: #fff;
+  }
+
+  .jiapp-btn-reset {
+    background-color: #6c757d; 
+    color: #fff;
+  }
+
+  #jiapp-error-msg {
+    color: #ff4444;
+    font-size: 12px;
+    margin-top: 5px;
+    display: none;
+  }
+</style>
+
+<!-- HTML JIAARA APP -->
+<div id="jiapp-container">
+  <h1 class="jiapp-title">Passport Photo Generator</h1>
+  <p class="jiapp-subtitle">Aplikasi oleh JIAARA</p>
+
+  <div class="jiapp-form-group">
+    <label class="jiapp-label">Upload Foto (Wajib PNG transparan/tanpa background):</label>
+    <input type="file" id="jiapp-file-input" class="jiapp-input-file" accept="image/png">
+    <div id="jiapp-error-msg">Format file harus PNG!</div>
+  </div>
+
+  <div class="jiapp-form-group">
+    <label class="jiapp-label">Ukuran Foto:</label>
+    <select id="jiapp-size-select" class="jiapp-select">
+      <option value="2x3" data-w="20" data-h="30">2x3 cm</option>
+      <option value="3x4" data-w="30" data-h="40">3x4 cm</option>
+      <option value="4x6" data-w="40" data-h="60">4x6 cm</option>
+      <option value="5.1x5.1" data-w="51" data-h="51">5,1x5,1 cm</option>
+      <option value="3.5x4.5" data-w="35" data-h="45">3,5x4,5 cm</option>
+    </select>
+  </div>
+
+  <div class="jiapp-form-group">
+    <label class="jiapp-label">Warna Background:</label>
+    <div class="jiapp-radio-group">
+      <label class="jiapp-radio-label"><input type="radio" name="jiapp-bg" value="#db1514" checked> Merah</label>
+      <label class="jiapp-radio-label"><input type="radio" name="jiapp-bg" value="#0090ff"> Biru</label>
+      <label class="jiapp-radio-label"><input type="radio" name="jiapp-bg" value="#ffffff"> Putih</label>
+    </div>
+  </div>
+
+  <div class="jiapp-form-group">
+    <label class="jiapp-radio-label" style="color:#dddddd; font-size:14px;">
+      <input type="checkbox" id="jiapp-border-check"> Tambahkan Border Putih
+    </label>
+  </div>
+
+  <div id="jiapp-guide-text">
+    💡 <b>Tips:</b> Tarik titik biru di sudut untuk mengubah ukuran. Geser gambar untuk memindahkan.
+  </div>
+
+  <div class="jiapp-preview-wrapper">
+    <div id="jiapp-preview-box">
+      <!-- Transform Box Container -->
+      <div id="jiapp-transform-box">
+        <img id="jiapp-preview-image" src="" alt="Preview">
+        <!-- Handles untuk Resize -->
+        <div class="jiapp-handle tl" data-dir="tl"></div>
+        <div class="jiapp-handle tr" data-dir="tr"></div>
+        <div class="jiapp-handle bl" data-dir="bl"></div>
+        <div class="jiapp-handle br" data-dir="br"></div>
+      </div>
+      <div id="jiapp-border-element" class="jiapp-border-preview"></div>
+    </div>
+  </div>
+
+  <div class="jiapp-btn-group">
+    <button id="jiapp-btn-reset" class="jiapp-btn jiapp-btn-reset">Reset</button>
+    <button id="jiapp-btn-download" class="jiapp-btn jiapp-btn-download">Download</button>
+  </div>
+</div>
+
+<!-- JAVASCRIPT JIAARA APP -->
+<script>
+  // Variables JIAARA APP
+  let jiapp_img = new Image();
+  let jiapp_hasImage = false;
+  
+  let jiapp_aspectRatio = 1;
+  let jiapp_imgW = 0;
+  let jiapp_imgH = 0;
+  let jiapp_posX = 0;
+  let jiapp_posY = 0;
+  
+  // Status Drag & Resize
+  let jiapp_action = null; // 'drag' atau 'resize'
+  let jiapp_resizeDir = null; 
+  let jiapp_startX = 0;
+  let jiapp_startY = 0;
+  let jiapp_startImgW = 0;
+  let jiapp_startImgH = 0;
+  let jiapp_startPosX = 0;
+  let jiapp_startPosY = 0;
+
+  // DOM Elements JIAARA APP
+  const jiapp_fileInput = document.getElementById('jiapp-file-input');
+  const jiapp_errorMsg = document.getElementById('jiapp-error-msg');
+  const jiapp_sizeSelect = document.getElementById('jiapp-size-select');
+  const jiapp_bgRadios = document.getElementsByName('jiapp-bg');
+  const jiapp_borderCheck = document.getElementById('jiapp-border-check');
+  const jiapp_previewBox = document.getElementById('jiapp-preview-box');
+  const jiapp_transformBox = document.getElementById('jiapp-transform-box');
+  const jiapp_previewImg = document.getElementById('jiapp-preview-image');
+  const jiapp_borderEl = document.getElementById('jiapp-border-element');
+  const jiapp_guideText = document.getElementById('jiapp-guide-text');
+  const jiapp_btnReset = document.getElementById('jiapp-btn-reset');
+  const jiapp_btnDownload = document.getElementById('jiapp-btn-download');
+
+  const jiapp_pxPerCm = 118; 
+
+  function jiapp_init() {
+    jiapp_updatePreviewBoxSize();
+    
+    jiapp_fileInput.addEventListener('change', jiapp_handleUpload);
+    jiapp_sizeSelect.addEventListener('change', jiapp_updatePreviewBoxSize);
+    
+    for(let i=0; i<jiapp_bgRadios.length; i++){
+      jiapp_bgRadios[i].addEventListener('change', jiapp_updateBgColor);
+    }
+    
+    jiapp_borderCheck.addEventListener('change', jiapp_toggleBorder);
+    jiapp_btnReset.addEventListener('click', jiapp_resetApp);
+    jiapp_btnDownload.addEventListener('click', jiapp_downloadImage);
+
+    // Mouse & Touch Events untuk Drag & Bounding Box
+    jiapp_transformBox.addEventListener('mousedown', jiapp_pointerDown);
+    jiapp_transformBox.addEventListener('touchstart', jiapp_pointerDown, {passive: false});
+    
+    document.addEventListener('mousemove', jiapp_pointerMove);
+    document.addEventListener('touchmove', jiapp_pointerMove, {passive: false});
+    
+    document.addEventListener('mouseup', jiapp_pointerUp);
+    document.addEventListener('touchend', jiapp_pointerUp);
+  }
+
+  function jiapp_updatePreviewBoxSize() {
+    const selectedOption = jiapp_sizeSelect.options[jiapp_sizeSelect.selectedIndex];
+    const wCm = parseFloat(selectedOption.getAttribute('data-w'));
+    const hCm = parseFloat(selectedOption.getAttribute('data-h'));
+    
+    const ratio = hCm / wCm;
+    const boxW = 200;
+    const boxH = 200 * ratio;
+    
+    jiapp_previewBox.style.width = boxW + 'px';
+    jiapp_previewBox.style.height = boxH + 'px';
+
+    if(jiapp_hasImage) {
+        // Pusatkan kembali gambar jika ukuran canvas diubah
+        jiapp_posX = (boxW - jiapp_imgW) / 2;
+        jiapp_posY = (boxH - jiapp_imgH) / 2;
+        jiapp_renderPreview();
+    }
+  }
+
+  function jiapp_updateBgColor() {
+    let bgColor = "#db1514";
+    for(let i=0; i<jiapp_bgRadios.length; i++){
+      if(jiapp_bgRadios[i].checked) bgColor = jiapp_bgRadios[i].value;
+    }
+    jiapp_previewBox.style.backgroundColor = bgColor;
+  }
+
+  function jiapp_toggleBorder() {
+    jiapp_borderEl.style.display = jiapp_borderCheck.checked ? 'block' : 'none';
+  }
+
+  function jiapp_handleUpload(e) {
+    const file = e.target.files[0];
+    if(!file) return;
+
+    if(file.type !== 'image/png') {
+      jiapp_errorMsg.style.display = 'block';
+      return;
+    }
+    jiapp_errorMsg.style.display = 'none';
+
+    const reader = new FileReader();
+    reader.onload = function(event) {
+      jiapp_img.onload = function() {
+        jiapp_hasImage = true;
+        jiapp_previewImg.src = jiapp_img.src;
+        jiapp_transformBox.style.display = 'block';
+        jiapp_guideText.style.display = 'block';
+        
+        jiapp_aspectRatio = jiapp_img.naturalWidth / jiapp_img.naturalHeight;
+
+        const boxW = jiapp_previewBox.offsetWidth;
+        const boxH = jiapp_previewBox.offsetHeight;
+        
+        // Kalkulasi ukuran awal agar muat di dalam box
+        const scaleW = boxW / jiapp_img.naturalWidth;
+        const scaleH = boxH / jiapp_img.naturalHeight;
+        const initialScale = Math.max(scaleW, scaleH); 
+        
+        jiapp_imgW = jiapp_img.naturalWidth * initialScale;
+        jiapp_imgH = jiapp_img.naturalHeight * initialScale;
+        
+        // Pusatkan posisi awal
+        jiapp_posX = (boxW - jiapp_imgW) / 2;
+        jiapp_posY = (boxH - jiapp_imgH) / 2;
+
+        jiapp_renderPreview();
+      }
+      jiapp_img.src = event.target.result;
+    }
+    reader.readAsDataURL(file);
+  }
+
+  // --- LOGIC DRAG & RESIZE BOUNDING BOX ---
+
+  // Helper untuk mendapatkan koordinat X dan Y (Support Mouse & Touch)
+  function jiapp_getPointerPos(e) {
+    if (e.touches && e.touches.length > 0) {
+      return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    }
+    return { x: e.clientX, y: e.clientY };
+  }
+
+  function jiapp_pointerDown(e) {
+    if(!jiapp_hasImage) return;
+    
+    const pos = jiapp_getPointerPos(e);
+    jiapp_startX = pos.x;
+    jiapp_startY = pos.y;
+    
+    jiapp_startImgW = jiapp_imgW;
+    jiapp_startImgH = jiapp_imgH;
+    jiapp_startPosX = jiapp_posX;
+    jiapp_startPosY = jiapp_posY;
+
+    if (e.target.classList.contains('jiapp-handle')) {
+      // Jika yang di-klik adalah titik handle (resize)
+      jiapp_action = 'resize';
+      jiapp_resizeDir = e.target.getAttribute('data-dir');
+    } else {
+      // Jika yang di-klik adalah gambar/kotak (drag)
+      jiapp_action = 'drag';
+    }
+  }
+
+  function jiapp_pointerMove(e) {
+    if (!jiapp_action) return;
+    e.preventDefault(); // Mencegah layar ter-scroll
+
+    const pos = jiapp_getPointerPos(e);
+    const deltaX = pos.x - jiapp_startX;
+    const deltaY = pos.y - jiapp_startY;
+
+    if (jiapp_action === 'drag') {
+      jiapp_posX = jiapp_startPosX + deltaX;
+      jiapp_posY = jiapp_startPosY + deltaY;
+    } 
+    else if (jiapp_action === 'resize') {
+      let newW = jiapp_startImgW;
+      
+      // Hitung perubahan lebar (Width) berdasarkan arah titik sudut yang ditarik
+      if (jiapp_resizeDir === 'br' || jiapp_resizeDir === 'tr') {
+        newW = jiapp_startImgW + deltaX;
+      } else if (jiapp_resizeDir === 'bl' || jiapp_resizeDir === 'tl') {
+        newW = jiapp_startImgW - deltaX;
+      }
+
+      // Minimal ukuran gambar agar tidak hilang
+      if (newW < 20) newW = 20;
+
+      // Tinggi selalu mengikuti Aspect Ratio (Proporsional)
+      const newH = newW / jiapp_aspectRatio;
+
+      // Hitung posisi X dan Y agar titik pusat anchor tetap pada tempatnya
+      let newX = jiapp_startPosX;
+      let newY = jiapp_startPosY;
+
+      if (jiapp_resizeDir === 'tl') {
+        newX = jiapp_startPosX + (jiapp_startImgW - newW);
+        newY = jiapp_startPosY + (jiapp_startImgH - newH);
+      } else if (jiapp_resizeDir === 'tr') {
+        newY = jiapp_startPosY + (jiapp_startImgH - newH);
+      } else if (jiapp_resizeDir === 'bl') {
+        newX = jiapp_startPosX + (jiapp_startImgW - newW);
+      }
+
+      jiapp_imgW = newW;
+      jiapp_imgH = newH;
+      jiapp_posX = newX;
+      jiapp_posY = newY;
+    }
+
+    jiapp_renderPreview();
+  }
+
+  function jiapp_pointerUp() {
+    jiapp_action = null;
+    jiapp_resizeDir = null;
+  }
+
+  // --- RENDER & DOWNLOAD ---
+
+  function jiapp_renderPreview() {
+    if(!jiapp_hasImage) return;
+    
+    // Terapkan ukuran dan posisi ke Transform Box
+    jiapp_transformBox.style.width = jiapp_imgW + 'px';
+    jiapp_transformBox.style.height = jiapp_imgH + 'px';
+    jiapp_transformBox.style.left = jiapp_posX + 'px';
+    jiapp_transformBox.style.top = jiapp_posY + 'px';
+  }
+
+  function jiapp_resetApp() {
+    jiapp_hasImage = false;
+    jiapp_transformBox.style.display = 'none';
+    jiapp_guideText.style.display = 'none';
+    jiapp_fileInput.value = '';
+    jiapp_errorMsg.style.display = 'none';
+    jiapp_borderCheck.checked = false;
+    jiapp_toggleBorder();
+    jiapp_bgRadios[0].checked = true;
+    jiapp_updateBgColor();
+    jiapp_sizeSelect.selectedIndex = 0;
+    jiapp_updatePreviewBoxSize();
+  }
+
+  function jiapp_downloadImage() {
+    if(!jiapp_hasImage) {
+      alert("Silakan upload foto PNG terlebih dahulu!");
+      return;
+    }
+
+    const selectedOption = jiapp_sizeSelect.options[jiapp_sizeSelect.selectedIndex];
+    const wCm = parseFloat(selectedOption.getAttribute('data-w')) / 10; 
+    const hCm = parseFloat(selectedOption.getAttribute('data-h')) / 10;
+    
+    // Dimensi final untuk hasil Export
+    const exportW = Math.round(wCm * jiapp_pxPerCm);
+    const exportH = Math.round(hCm * jiapp_pxPerCm);
+
+    const canvas = document.createElement('canvas');
+    canvas.width = exportW;
+    canvas.height = exportH;
+    const ctx = canvas.getContext('2d');
+
+    // 1. Gambar Background Color
+    let bgColor = "#db1514";
+    for(let i=0; i<jiapp_bgRadios.length; i++){
+      if(jiapp_bgRadios[i].checked) bgColor = jiapp_bgRadios[i].value;
+    }
+    ctx.fillStyle = bgColor;
+    ctx.fillRect(0, 0, exportW, exportH);
+
+    // 2. Hitung rasio dari Preview Box ke Ukuran Export Sebenarnya
+    const boxW = jiapp_previewBox.offsetWidth;
+    const boxH = jiapp_previewBox.offsetHeight;
+    const exportRatioX = exportW / boxW;
+    const exportRatioY = exportH / boxH;
+
+    // 3. Konversi posisi X, Y, Width, dan Height saat ini ke skala Canvas Export
+    const finalX = jiapp_posX * exportRatioX;
+    const finalY = jiapp_posY * exportRatioY;
+    const finalImgW = jiapp_imgW * exportRatioX;
+    const finalImgH = jiapp_imgH * exportRatioY;
+
+    // 4. Gambar Fotonyap
+    ctx.drawImage(jiapp_img, finalX, finalY, finalImgW, finalImgH);
+
+    // 5. Tambahkan Border (Jika diceklis)
+    if(jiapp_borderCheck.checked) {
+      const borderThickness = Math.max(10, Math.round(exportW * 0.03)); 
+      ctx.lineWidth = borderThickness * 2; 
+      ctx.strokeStyle = "#ffffff";
+      ctx.strokeRect(0, 0, exportW, exportH);
+    }
+
+    // 6. Download file
+    const dataURL = canvas.toDataURL("image/jpeg", 1.0);
+    const link = document.createElement('a');
+    link.download = `JIAARA_PasFoto_${selectedOption.value}.jpg`;
+    link.href = dataURL;
+    link.click();
+  }
+
+  window.onload = jiapp_init;
+</script>
+
+<p style="text-align: center;"><b>ADA KRITIK, SARAN DAN REQUEST APLIKASI?</b></p><p style="text-align: center;"><i>SILAHKAN KOMEN DI KOLOM KOMENTAR DI BAWAH INI</i></p>
