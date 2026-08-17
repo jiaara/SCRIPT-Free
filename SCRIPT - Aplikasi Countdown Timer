@@ -1,0 +1,265 @@
+<!-- JIAARA Countdown App Container -->
+<div class="jiapp-main-container">
+    <h1 class="jiapp-title">COUNTDOWN TIMER</h1>
+    <p class="jiapp-subtitle">Aplikasi oleh JIAARA</p>
+
+    <div class="jiapp-display-box">
+        <span id="jiapp-timer-label">00:00:00</span>
+    </div>
+
+    <!-- Kontrol Berdasarkan Tanggal -->
+    <div class="jiapp-control-group">
+        <label class="jiapp-input-label">Pilih Tanggal & Waktu Selesai:</label>
+        <div class="jiapp-input-flex">
+            <input type="datetime-local" id="jiapp-date-input" class="jiapp-input-field">
+            <button onclick="jiappSetTargetDate()" class="jiapp-btn-action">Set</button>
+        </div>
+    </div>
+
+    <!-- Tombol Cepat -->
+    <div class="jiapp-quick-add">
+        <button onclick="jiappAddTime(30)" class="jiapp-btn-small">+0:30</button>
+        <button onclick="jiappAddTime(60)" class="jiapp-btn-small">+1:00</button>
+        <button onclick="jiappAddTime(300)" class="jiapp-btn-small">+5:00</button>
+    </div>
+
+    <!-- Input Manual Menit -->
+    <div class="jiapp-manual-group">
+        <input type="number" id="jiapp-manual-min" class="jiapp-input-field-small" placeholder="Menit...">
+        <button onclick="jiappAddManual()" class="jiapp-btn-add-manual">Tambah Menit</button>
+    </div>
+
+    <div class="jiapp-footer-controls">
+        <button onclick="jiappResetTimer()" class="jiapp-btn-reset">RESET ULANG</button>
+    </div>
+</div>
+
+<style>
+    /* CSS dengan Prefix jiapp- */
+    .jiapp-main-container {
+        background-color: #000000;
+        padding: 25px;
+        border-radius: 15px;
+        max-width: 380px;
+        margin: 20px auto;
+        font-family: 'Segoe UI', Arial, sans-serif;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+        border: 1px solid #333;
+    }
+
+    .jiapp-title {
+        color: #ff0000;
+        margin: 0;
+        font-size: 26px;
+        font-weight: 800;
+        text-transform: uppercase;
+    }
+
+    .jiapp-subtitle {
+        color: #ff0000;
+        font-size: 11px;
+        margin-top: 4px;
+        margin-bottom: 20px;
+        letter-spacing: 2px;
+        font-weight: bold;
+    }
+
+    .jiapp-display-box {
+        background: #111;
+        padding: 15px;
+        border-radius: 8px;
+        border: 2px solid #ff0000;
+        margin-bottom: 20px;
+    }
+
+    #jiapp-timer-label {
+        font-size: 45px;
+        font-family: 'Courier New', monospace;
+        font-weight: bold;
+        color: #ffffff;
+        text-shadow: 0 0 10px rgba(255,0,0,0.5);
+    }
+
+    .jiapp-input-label {
+        display: block;
+        font-size: 11px;
+        margin-bottom: 8px;
+        color: #aaa;
+        text-align: left;
+    }
+
+    .jiapp-input-flex {
+        display: flex;
+        gap: 5px;
+        margin-bottom: 15px;
+    }
+
+    .jiapp-input-field {
+        flex: 1;
+        padding: 8px;
+        border-radius: 4px;
+        border: 1px solid #444;
+        background: #222;
+        color: #fff;
+    }
+
+    .jiapp-btn-action {
+        background-color: #ff0000;
+        color: white;
+        border: none;
+        padding: 0 15px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    .jiapp-quick-add {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 10px;
+    }
+
+    .jiapp-btn-small {
+        background-color: transparent;
+        color: #ff0000;
+        border: 1px solid #ff0000;
+        padding: 6px 0;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+        flex: 1;
+        font-size: 13px;
+    }
+
+    .jiapp-btn-small:hover {
+        background-color: #ff0000;
+        color: white;
+    }
+
+    .jiapp-manual-group {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 20px;
+    }
+
+    .jiapp-input-field-small {
+        flex: 1;
+        background: #111;
+        border: 1px solid #444;
+        color: white;
+        padding: 8px;
+        border-radius: 4px;
+    }
+
+    .jiapp-btn-add-manual {
+        flex: 1.5;
+        background: #ff0000;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-weight: bold;
+        cursor: pointer;
+        font-size: 13px;
+    }
+
+    .jiapp-btn-reset {
+        background-color: #333;
+        color: #999;
+        border: none;
+        padding: 8px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 11px;
+        width: 100%;
+        transition: 0.3s;
+    }
+
+    .jiapp-btn-reset:hover {
+        background-color: #ff0000;
+        color: white;
+    }
+</style>
+
+<script>
+    /* JavaScript dengan Prefix jiapp- */
+    let jiappCountdownInterval;
+    let jiappTargetTime;
+
+    function jiappUpdateDisplay(ms) {
+        if (ms < 0) ms = 0;
+        
+        let seconds = Math.floor((ms / 1000) % 60);
+        let minutes = Math.floor((ms / (1000 * 60)) % 60);
+        let hours = Math.floor((ms / (1000 * 60 * 60)));
+
+        let hDisplay = hours < 10 ? "0" + hours : hours;
+        let mDisplay = minutes < 10 ? "0" + minutes : minutes;
+        let sDisplay = seconds < 10 ? "0" + seconds : seconds;
+        
+        document.getElementById("jiapp-timer-label").innerText = hDisplay + ":" + mDisplay + ":" + sDisplay;
+    }
+
+    function jiappStartInterval() {
+        clearInterval(jiappCountdownInterval);
+        jiappCountdownInterval = setInterval(() => {
+            const now = new Date().getTime();
+            const distance = jiappTargetTime - now;
+
+            if (distance <= 0) {
+                clearInterval(jiappCountdownInterval);
+                jiappUpdateDisplay(0);
+                alert("Waktu Habis!");
+            } else {
+                jiappUpdateDisplay(distance);
+            }
+        }, 1000);
+    }
+
+    function jiappAddTime(seconds) {
+        const now = new Date().getTime();
+        if (!jiappTargetTime || jiappTargetTime < now) {
+            jiappTargetTime = now + (seconds * 1000);
+        } else {
+            jiappTargetTime += (seconds * 1000);
+        }
+        jiappUpdateDisplay(jiappTargetTime - now);
+        jiappStartInterval();
+    }
+
+    function jiappAddManual() {
+        const input = document.getElementById("jiapp-manual-min");
+        const mins = parseFloat(input.value);
+        if (isNaN(mins) || mins <= 0) {
+            alert("Masukkan jumlah menit yang valid");
+            return;
+        }
+        jiappAddTime(mins * 60);
+        input.value = ""; // Bersihkan input
+    }
+
+    function jiappSetTargetDate() {
+        const inputVal = document.getElementById("jiapp-date-input").value;
+        if (!inputVal) {
+            alert("Pilih tanggal dahulu!");
+            return;
+        }
+        jiappTargetTime = new Date(inputVal).getTime();
+        const now = new Date().getTime();
+        if (jiappTargetTime <= now) {
+            alert("Pilih waktu masa depan!");
+            return;
+        }
+        jiappUpdateDisplay(jiappTargetTime - now);
+        jiappStartInterval();
+    }
+
+    function jiappResetTimer() {
+        clearInterval(jiappCountdownInterval);
+        jiappTargetTime = null;
+        document.getElementById("jiapp-date-input").value = "";
+        document.getElementById("jiapp-manual-min").value = "";
+        jiappUpdateDisplay(0);
+    }
+</script>
+
