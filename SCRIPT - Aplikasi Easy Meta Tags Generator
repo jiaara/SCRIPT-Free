@@ -1,0 +1,217 @@
+<div id="meta-generator-wrapper">
+  <h2 class="tool-title">Easy Meta Tags Generator Online</h2>
+
+  <div class="meta-form">
+    <div class="input-row">
+      <label for="desc">Description:</label>
+      <input type="text" id="desc" placeholder="Deskripsi singkat blog Anda...">
+    </div>
+
+    <div class="input-row">
+      <label for="keys">Keywords:</label>
+      <input type="text" id="keys" placeholder="keyword1, keyword2, keyword3">
+    </div>
+
+    <div class="input-row">
+      <label for="author">Author:</label>
+      <input type="text" id="author" placeholder="Nama Penulis/Pemilik">
+    </div>
+
+    <div class="input-row">
+      <label for="lang">Language:</label>
+      <input type="text" id="lang" placeholder="English, Indonesia">
+    </div>
+
+    <div class="input-row">
+      <label for="country">Country:</label>
+      <input type="text" id="country" placeholder="Indonesia, United States">
+    </div>
+
+    <div class="input-row">
+      <label for="robots">Robots:</label>
+      <select id="robots">
+        <option value="index, follow">index, follow</option>
+        <option value="noindex, follow">noindex, follow</option>
+        <option value="index, nofollow">index, nofollow</option>
+        <option value="noindex, nofollow">noindex, nofollow</option>
+      </select>
+    </div>
+
+    <div class="button-group">
+      <button class="btn-generate" onclick="generateMeta()">Generate</button>
+      <button class="btn-reset" onclick="resetForm()">Reset</button>
+    </div>
+  </div>
+
+  <div id="result-container" style="display:none;">
+    <textarea id="metaOutput" readonly></textarea>
+    <button class="btn-copy" onclick="copyMeta()">Salin Kode Meta Tag</button>
+  </div>
+
+  <div class="spoiler-section">
+    <div class="spoiler-header" onclick="toggleSpoiler()">
+      <span>Cara Pemasangan Kode <small id="sp-status">(buka)</small></span>
+    </div>
+    <div id="spoiler-body" class="spoiler-content">
+      <ol>
+        <li>Salin kode meta tag yang dihasilkan di atas.</li>
+        <li>Buka Dashboard Blogger > <b>Tema</b> > <b>Edit HTML</b>.</li>
+        <li>Cari kode <code>&lt;head&gt;</code>.</li>
+        <li>Tempelkan kode meta tag tepat di bawah kode <code>&lt;head&gt;</code> tersebut.</li>
+        <li>Klik Simpan.</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<style>
+  #meta-generator-wrapper {
+    max-width: 650px;
+    margin: 20px auto;
+    padding: 25px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    /* Background Hitam */
+    background: #121212; 
+    color: #ffffff;
+    border: 1px solid #333;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  }
+  
+  .tool-title { text-align: left; margin-bottom: 30px; font-weight: 600; color: #ff3333; }
+  
+  .input-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  
+  .input-row label {
+    flex: 0 0 150px;
+    font-weight: bold;
+    font-size: 14px;
+    color: #bbb;
+  }
+  
+  .input-row input, .input-row select {
+    flex: 1;
+    padding: 10px 15px;
+    border: 1px solid #444;
+    border-radius: 8px;
+    background: #1e1e1e;
+    color: #fff;
+    outline: none;
+    transition: border 0.3s;
+  }
+
+  .input-row input:focus {
+    border-color: #ff3333;
+  }
+  
+  .button-group {
+    display: flex;
+    gap: 15px;
+    margin: 30px 0 20px 150px;
+  }
+  
+  /* Tombol Merah */
+  .btn-generate, .btn-reset, .btn-copy {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: background 0.3s, transform 0.1s;
+  }
+
+  .btn-generate { background: #cc0000; }
+  .btn-generate:hover { background: #ff0000; }
+  
+  .btn-reset { background: #444; }
+  .btn-reset:hover { background: #666; }
+
+  .btn-copy { 
+    background: #cc0000; 
+    width: 100%; 
+    margin-top: 10px;
+  }
+  .btn-copy:hover { background: #ff0000; }
+  
+  .btn-generate:active, .btn-copy:active { transform: scale(0.98); }
+  
+  #metaOutput {
+    width: 100%;
+    height: 120px;
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #444;
+    border-radius: 8px;
+    background: #000;
+    font-family: 'Courier New', monospace;
+    color: #00ff00; /* Warna teks hasil seperti terminal */
+    box-sizing: border-box;
+    font-size: 13px;
+  }
+
+  /* Spoiler Style */
+  .spoiler-section { margin-top: 30px; border-top: 1px solid #333; padding-top: 15px; }
+  .spoiler-header { cursor: pointer; font-weight: bold; color: #ff3333; }
+  .spoiler-content { display: none; padding: 15px; font-size: 14px; line-height: 1.6; color: #ccc; }
+  
+  /* Responsive */
+  @media (max-width: 500px) {
+    .input-row { flex-direction: column; align-items: flex-start; }
+    .input-row label { margin-bottom: 5px; }
+    .button-group { margin-left: 0; }
+  }
+</style>
+
+<script>
+  function generateMeta() {
+    const desc = document.getElementById('desc').value;
+    const keys = document.getElementById('keys').value;
+    const author = document.getElementById('author').value;
+    const lang = document.getElementById('lang').value;
+    const country = document.getElementById('country').value;
+    const robots = document.getElementById('robots').value;
+
+    let metaTag = `\n`;
+    if(desc) metaTag += `<meta name="description" content="${desc}"/>\n`;
+    if(keys) metaTag += `<meta name="keywords" content="${keys}"/>\n`;
+    if(author) metaTag += `<meta name="author" content="${author}"/>\n`;
+    if(lang) metaTag += `<meta name="language" content="${lang}"/>\n`;
+    if(country) metaTag += `<meta name="geo.country" content="${country}"/>\n`;
+    metaTag += `<meta name="robots" content="${robots}"/>`;
+
+    document.getElementById('metaOutput').value = metaTag;
+    document.getElementById('result-container').style.display = 'block';
+  }
+
+  function resetForm() {
+    document.querySelectorAll('#meta-generator-wrapper input').forEach(input => input.value = '');
+    document.getElementById('result-container').style.display = 'none';
+  }
+
+  function copyMeta() {
+    const copyText = document.getElementById("metaOutput");
+    copyText.select();
+    document.execCommand("copy");
+    alert("Meta Tag berhasil disalin!");
+  }
+
+  function toggleSpoiler() {
+    const body = document.getElementById('spoiler-body');
+    const status = document.getElementById('sp-status');
+    if (body.style.display === "block") {
+      body.style.display = "none";
+      status.innerText = "(buka)";
+    } else {
+      body.style.display = "block";
+      status.innerText = "(tutup)";
+    }
+  }
+</script>
+
