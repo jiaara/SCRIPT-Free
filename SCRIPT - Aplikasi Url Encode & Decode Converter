@@ -1,0 +1,104 @@
+<div style="font-family: 'Inter', system-ui, -apple-system, sans-serif; max-width: 600px; margin: 20px auto; padding: 30px; background: #000000; border-radius: 16px; box-shadow: 0 10px 40px rgba(255,0,0,0.1); border: 1px solid #222;">
+    
+    <h2 style="text-align: center; color: #ffffff; margin-bottom: 25px; font-size: 1.5rem; letter-spacing: 1px;">URL Encoder & Decoder</h2>
+
+    <div style="display: flex; justify-content: center; align-items: center; gap: 15px; margin-bottom: 25px;">
+        <span id="label-encode" style="font-size: 14px; font-weight: 600; color: #ff0000; transition: .3s;">Encode</span>
+        <label style="position: relative; display: inline-block; width: 50px; height: 26px;">
+            <input type="checkbox" id="mode-toggle" style="opacity: 0; width: 0; height: 0;">
+            <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ff0000; transition: .4s; border-radius: 34px;">
+                <style>
+                    #mode-toggle:checked + span { background-color: #550000; }
+                    #mode-toggle:checked + span:before { transform: translateX(24px); }
+                    span:before { position: absolute; content: ""; height: 18px; width: 18px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+                </style>
+            </span>
+        </label>
+        <span id="label-decode" style="font-size: 14px; font-weight: 600; color: #444; transition: .3s;">Decode</span>
+    </div>
+
+    <div style="margin-bottom: 20px;">
+        <!-- Placeholder telah diperbarui dengan contoh URL -->
+        <textarea id="url-input" placeholder="Contoh: https://www.jiaara.id" style="width: 100%; height: 120px; padding: 12px; border: 1px solid #333; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 14px; resize: none; box-sizing: border-box; outline: none; background: #111; color: #fff; transition: border-color 0.2s;"></textarea>
+    </div>
+
+    <button onclick="processURL()" style="width: 100%; padding: 14px; background: #ff0000; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 20px; font-size: 14px; letter-spacing: 1px; text-transform: uppercase; transition: transform 0.1s, background 0.3s;" id="gen-btn">
+        GENERATE
+    </button>
+
+    <div style="position: relative; background: #0a0a0a; border-radius: 8px; padding: 15px; border: 1px solid #222;">
+        <label style="display: block; font-size: 11px; font-weight: 700; color: #666; margin-bottom: 8px; text-transform: uppercase;">Hasil:</label>
+        <div id="url-output" style="min-height: 60px; word-break: break-all; font-family: 'Courier New', monospace; font-size: 14px; color: #00ff41; line-height: 1.5;">---</div>
+        
+        <button onclick="copyResult()" id="copy-btn" style="margin-top: 15px; width: 100%; padding: 10px; background: transparent; color: #ff0000; border: 1px solid #ff0000; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; display: none; transition: all 0.3s;">
+            SALIN HASIL
+        </button>
+    </div>
+
+    <div id="status-msg" style="margin-top: 15px; font-size: 12px; text-align: center; height: 15px; font-weight: 500;"></div>
+</div>
+
+<script>
+    const toggle = document.getElementById('mode-toggle');
+    const labelEnc = document.getElementById('label-encode');
+    const labelDec = document.getElementById('label-decode');
+    const genBtn = document.getElementById('gen-btn');
+    const inputArea = document.getElementById('url-input');
+    const outputDiv = document.getElementById('url-output');
+    const copyBtn = document.getElementById('copy-btn');
+    const statusMsg = document.getElementById('status-msg');
+
+    toggle.addEventListener('change', () => {
+        if (toggle.checked) {
+            labelDec.style.color = '#ff0000';
+            labelEnc.style.color = '#444';
+        } else {
+            labelEnc.style.color = '#ff0000';
+            labelDec.style.color = '#444';
+        }
+    });
+
+    function processURL() {
+        const val = inputArea.value.trim();
+        const isDecode = toggle.checked;
+        
+        if (!val) {
+            showStatus("Input tidak boleh kosong!", "#ff4444");
+            return;
+        }
+
+        try {
+            let result = isDecode ? 
+                decodeURIComponent(val.replace(/\+/g, ' ')) : 
+                encodeURIComponent(val);
+            
+            outputDiv.innerText = result;
+            copyBtn.style.display = 'block';
+            showStatus(isDecode ? "Berhasil di-Decode" : "Berhasil di-Encode", "#00ff41");
+        } catch (err) {
+            showStatus("Gagal: Format tidak valid!", "#ff4444");
+            outputDiv.innerText = "Error";
+            copyBtn.style.display = 'none';
+        }
+    }
+
+    function showStatus(text, color) {
+        statusMsg.innerText = text;
+        statusMsg.style.color = color;
+    }
+
+    function copyResult() {
+        const textToCopy = outputDiv.innerText;
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            const originalText = copyBtn.innerText;
+            copyBtn.innerText = "TERSALIN!";
+            copyBtn.style.background = "#ff0000";
+            copyBtn.style.color = "#fff";
+            setTimeout(() => {
+                copyBtn.innerText = originalText;
+                copyBtn.style.background = "transparent";
+                copyBtn.style.color = "#ff0000";
+            }, 2000);
+        });
+    }
+</script>
